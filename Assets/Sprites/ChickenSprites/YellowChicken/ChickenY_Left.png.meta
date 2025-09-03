@@ -57,7 +57,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 0
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 64
@@ -125,10 +125,10 @@ TextureImporter:
       name: ChickenY_Left_0
       rect:
         serializedVersion: 2
-        x: 7
+        x: 0
         y: 32
-        width: 19
-        height: 19
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,10 +146,10 @@ TextureImporter:
       name: ChickenY_Left_1
       rect:
         serializedVersion: 2
-        x: 39
+        x: 32
         y: 32
-        width: 20
-        height: 17
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,10 +167,10 @@ TextureImporter:
       name: ChickenY_Left_2
       rect:
         serializedVersion: 2
-        x: 7
+        x: 0
         y: 0
-        width: 19
-        height: 19
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,10 +188,10 @@ TextureImporter:
       name: ChickenY_Left_3
       rect:
         serializedVersion: 2
-        x: 39
+        x: 32
         y: 0
-        width: 20
-        height: 18
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

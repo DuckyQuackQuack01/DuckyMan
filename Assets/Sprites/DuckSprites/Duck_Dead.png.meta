@@ -57,7 +57,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 0
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 64
@@ -125,10 +125,10 @@ TextureImporter:
       name: Duck_Dead_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 38
-        width: 17
-        height: 20
+        x: 0
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,10 +146,10 @@ TextureImporter:
       name: Duck_Dead_1
       rect:
         serializedVersion: 2
-        x: 38
-        y: 37
-        width: 21
-        height: 21
+        x: 32
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,10 +167,10 @@ TextureImporter:
       name: Duck_Dead_2
       rect:
         serializedVersion: 2
-        x: 5
-        y: 3
-        width: 23
-        height: 25
+        x: 0
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,10 +188,10 @@ TextureImporter:
       name: Duck_Dead_3
       rect:
         serializedVersion: 2
-        x: 38
-        y: 3
-        width: 21
-        height: 25
+        x: 32
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -208,7 +208,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: df669822ea0a9db4683c96866ebdc697
+    spriteID: a3e15f81444225048be1500cd0f3867b
     internalID: 0
     vertices: []
     indices: 
