@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8c7e2ab08e48312429706116c3f826a4
+guid: b4223f41c96045c488fdf36b1f9b4577
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3682113843798279532
-    second: Dirt_4_0
+      213: -1316844503959986125
+    second: GrassToDirtOuterEdge_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 0
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 64
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Dirt_4_0
+      name: GrassToDirtOuterEdge_0
       rect:
         serializedVersion: 2
         x: 0
@@ -127,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c650522480f791330800000000000000
-      internalID: 3682113843798279532
+      spriteID: 3302a0d86e0a9bde0800000000000000
+      internalID: -1316844503959986125
       vertices: []
       indices: 
       edges: []
@@ -144,7 +144,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Dirt_4_0: 3682113843798279532
+      GrassToDirtOuterEdge_0: -1316844503959986125
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

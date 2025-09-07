@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Dirt_2_0
+  m_Name: GhostExit_0
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 5751064685491912666, guid: 1b03a2e2073e41442857bf1653f6c975, type: 3}
+  m_Sprite: {fileID: -912378581589104014, guid: 8888066ae9a71fc4295f03c7e89e5fe6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
