@@ -48,14 +48,11 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(AudioClip clip, bool loop = false)
     {
-        if (gameStarted)
+        if (SFXSource.clip != clip || !SFXSource.isPlaying)
         {
-            if(SFXSource.clip != clip || !SFXSource.isPlaying)
-            {
-                SFXSource.clip = clip;
-                SFXSource.loop = loop;
-                SFXSource.Play();
-            }
+            SFXSource.clip = clip;
+            SFXSource.loop = loop;
+            SFXSource.Play();
         }
     }
 
