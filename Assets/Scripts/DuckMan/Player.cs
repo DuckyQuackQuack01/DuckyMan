@@ -13,10 +13,10 @@ public class Player : MonoBehaviour
     public float moveSpeed = 2f;
     private int currentTargetIndex = 0;
     private Vector2[] loopPoints = new Vector2[] {
-        new Vector2(-3.2f, 6.749f),
-        new Vector2(-3.2f, 5.16f),
-        new Vector2(-5.214f, 5.16f), 
-        new Vector2(-5.214f, 6.749f)
+        new Vector2(-3.24f, 6.749f),
+        new Vector2(-3.24f, 5.16f),
+        new Vector2(-5.23f, 5.16f), 
+        new Vector2(-5.23f, 6.749f)
     };
 
     private Animator animator;
@@ -86,7 +86,6 @@ public class Player : MonoBehaviour
                 float t = elapsed / duration;
                 transform.position = Vector2.Lerp(start, target, t);
                 yield return null;
-                Debug.Log("Sound Play");
             }
 
             transform.position = target;

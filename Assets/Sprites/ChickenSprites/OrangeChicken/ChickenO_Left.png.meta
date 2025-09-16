@@ -81,7 +81,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 64
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -155,10 +155,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ba55227c6d979f720800000000000000
-      internalID: 2880467400051021227
+      spriteID: 8758bb6d000a8674a86013c381636f00
+      internalID: 239884306
       vertices: []
       indices: 
       edges: []
@@ -176,10 +176,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c9aa8fac938634000800000000000000
-      internalID: 18973420867332764
+      spriteID: 1a65ca3d832e8ca4589e88cf49389e14
+      internalID: 172925200
       vertices: []
       indices: 
       edges: []
@@ -197,10 +197,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 03d5e2263dacbc5c0800000000000000
-      internalID: -4194035618731369168
+      spriteID: a276080b39bf1384881837333e49d7e0
+      internalID: -1611701486
       vertices: []
       indices: 
       edges: []
@@ -217,9 +217,9 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       ChickenO_Left_0: -513003892618332886
-      ChickenO_Left_1: 2880467400051021227
-      ChickenO_Left_2: 18973420867332764
-      ChickenO_Left_3: -4194035618731369168
+      ChickenO_Left_1: 239884306
+      ChickenO_Left_2: 172925200
+      ChickenO_Left_3: -1611701486
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
