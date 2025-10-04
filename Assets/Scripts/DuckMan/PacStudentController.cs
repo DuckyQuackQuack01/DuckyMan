@@ -14,10 +14,13 @@ public class PacStudent : MonoBehaviour
     private string lastInput = "";
     private string currentInput = "D";
 
+    private Animator animator;
+
     void Start()
     {
         currentGridPos = WorldToGrid(transform.position);
         transform.position = GridToWorld(currentGridPos);
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -41,6 +44,7 @@ public class PacStudent : MonoBehaviour
             if (IsWalkable(nextPos))
             {
                 currentInput = lastInput;
+                PlayAnimation(currentInput);
                 StartCoroutine(MoveTo(nextPos));
                 return;
             }
@@ -51,6 +55,7 @@ public class PacStudent : MonoBehaviour
             Vector3Int nextPos = currentGridPos + DirFromInput(currentInput);
             if (IsWalkable(nextPos))
             {
+                PlayAnimation(currentInput);
                 StartCoroutine(MoveTo(nextPos));
                 return;
             }
@@ -115,6 +120,25 @@ public class PacStudent : MonoBehaviour
             return false;
 
         return true;
+    }
+
+    private void PlayAnimation(string input)
+    {
+        switch (input)
+        {
+            case "W":
+                animator.Play("DuckTop_anim");
+                break;
+            case "S":
+                animator.Play("DuckDown_anim");
+                break;
+            case "A":
+                animator.Play("DuckLeft_anim");
+                break;
+            case "D":
+                animator.Play("DuckRight_anim");
+                break;
+        }
     }
 }
 
