@@ -23,6 +23,10 @@ public class AudioManager : MonoBehaviour
 
     public bool gameStarted = false;
 
+    public AudioSource SFX {
+        get { return SFXSource; }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,11 +53,16 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(AudioClip clip, bool loop = false)
     {
+        Debug.Log($"PlaySFX called: clip={clip.name}, loop={loop}, currentlyPlaying={SFX.isPlaying}, currentClip={(SFX.clip != null ? SFX.clip.name : "null")}");
+
         if (SFXSource.clip != clip || !SFXSource.isPlaying)
         {
             SFXSource.clip = clip;
             SFXSource.loop = loop;
             SFXSource.Play();
+        } else
+        {
+            Debug.Log("SFX already playing same clip, skipping Play()");
         }
     }
 
