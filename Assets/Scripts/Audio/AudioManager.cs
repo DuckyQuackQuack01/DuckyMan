@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour
 {
     [Header("--------Audio Source--------")]
     [SerializeField] AudioSource musicSource;
+    //[SerializeField] AudioSource loopSFXSource;
     [SerializeField] AudioSource SFXSource;
 
     [Header("--------Audio Clip--------")]
@@ -61,11 +62,30 @@ public class AudioManager : MonoBehaviour
         SFXSource.Stop();
     }
 
-    public void PlayOnceSFX(AudioClip clip)
-    {
-        if (gameStarted)
-        {
-            SFXSource.PlayOneShot(clip);
-        }
-    }
+    //public void PlayOnceSFX(AudioClip clip)
+    //{
+    //    if (gameStarted)
+    //    {
+    //        SFXSource.PlayOneShot(clip);
+    //    }
+    //}
+
+    //public void PlayLoopSFX(AudioClip clip)
+    //{
+    //    if(!loopSFXSource.isPlaying || loopSFXSource.clip != clip)
+    //    {
+    //        loopSFXSource.clip = clip;
+    //        loopSFXSource.loop = true;
+    //        loopSFXSource.Play();
+    //    }
+    //}
+
+    //public void StopLoopSFX()
+    //{
+    //    if (loopSFXSource.isPlaying)
+    //    {
+    //        loopSFXSource.Stop();
+    //        loopSFXSource.clip = null;
+    //    }
+    //}
 }

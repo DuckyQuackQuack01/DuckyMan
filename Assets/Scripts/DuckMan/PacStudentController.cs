@@ -7,9 +7,16 @@ public class PacStudent : MonoBehaviour
     public float moveSpeed = 5f;
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
+    public Tilemap palletTileMap;
+
+    public AudioManager audioManager;
 
     private Vector3Int currentGridPos;
+
     private bool isMoving = false;
+    private bool wallHitPlayed = false;
+    private bool isEating = false;
+    private bool isMovingSoundPlaying = false;
 
     private string lastInput = "";
     private string currentInput = "D";
@@ -34,30 +41,55 @@ public class PacStudent : MonoBehaviour
         {
             TryMove();
         }
+
+        if(isMoving && !isMovingSoundPlaying)
+        {
+            audioManager.PlaySFX(audioManager.duckWalk, true);
+            isMovingSoundPlaying = true;
+        } else if ((!isMoving || isEating) && isMovingSoundPlaying)
+        {
+            audioManager.StopSFX();
+            isMovingSoundPlaying = false;
+        }
     }
 
     private void TryMove()
     {
+        Vector3Int nextPos;
+
         if (!string.IsNullOrEmpty(lastInput))
         {
-            Vector3Int nextPos = currentGridPos + DirFromInput(lastInput);
+            nextPos = currentGridPos + DirFromInput(lastInput);
             if (IsWalkable(nextPos))
             {
                 currentInput = lastInput;
                 PlayAnimation(currentInput);
                 StartCoroutine(MoveTo(nextPos));
+                wallHitPlayed = false;
                 return;
             }
+        } else {
+            audioManager.PlaySFX(audioManager.duckHitWall, false);
         }
 
         if (!string.IsNullOrEmpty(currentInput))
         {
-            Vector3Int nextPos = currentGridPos + DirFromInput(currentInput);
+            nextPos = currentGridPos + DirFromInput(currentInput);
             if (IsWalkable(nextPos))
             {
                 PlayAnimation(currentInput);
                 StartCoroutine(MoveTo(nextPos));
+                wallHitPlayed = false;
                 return;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(lastInput))
+        {
+            nextPos = currentGridPos + DirFromInput(lastInput);
+            if (!IsWalkable(nextPos))
+            {
+                audioManager.PlaySFX(audioManager.duckHitWall, false);
             }
         }
     }
@@ -83,6 +115,7 @@ public class PacStudent : MonoBehaviour
 
         transform.position = target;
         currentGridPos = nextGrid;
+        CheckForPallet();
         isMoving = false;
     }
 
@@ -139,6 +172,25 @@ public class PacStudent : MonoBehaviour
                 animator.Play("DuckRight_anim");
                 break;
         }
+    }
+
+    private void CheckForPallet()
+    {
+        Vector3Int palletCell = currentGridPos;
+
+        if (palletTileMap.HasTile(palletCell))
+        {
+            isEating = true;
+            audioManager.PlaySFX(audioManager.duckEat, false);
+            palletTileMap.SetTile(palletCell, null);
+            StartCoroutine(StopEatingNextFrame());
+        }
+    }
+
+    private IEnumerator StopEatingNextFrame()
+    {
+        yield return null;
+        isEating = false;
     }
 }
 
