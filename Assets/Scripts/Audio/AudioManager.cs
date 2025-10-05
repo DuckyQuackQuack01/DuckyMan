@@ -6,7 +6,6 @@ public class AudioManager : MonoBehaviour
 {
     [Header("--------Audio Source--------")]
     [SerializeField] AudioSource musicSource;
-    //[SerializeField] AudioSource loopSFXSource;
     [SerializeField] AudioSource SFXSource;
 
     [Header("--------Audio Clip--------")]
@@ -23,10 +22,6 @@ public class AudioManager : MonoBehaviour
 
     public bool gameStarted = false;
 
-    public AudioSource SFX {
-        get { return SFXSource; }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +31,7 @@ public class AudioManager : MonoBehaviour
     IEnumerator PlayIntroThenBackground()
     {
         musicSource.PlayOneShot(startMusic);
-        
+
         yield return new WaitForSeconds(startMusic.length);
 
         gameStarted = true;
@@ -48,21 +43,16 @@ public class AudioManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void PlaySFX(AudioClip clip, bool loop = false)
     {
-        Debug.Log($"PlaySFX called: clip={clip.name}, loop={loop}, currentlyPlaying={SFX.isPlaying}, currentClip={(SFX.clip != null ? SFX.clip.name : "null")}");
-
         if (SFXSource.clip != clip || !SFXSource.isPlaying)
         {
             SFXSource.clip = clip;
             SFXSource.loop = loop;
             SFXSource.Play();
-        } else
-        {
-            Debug.Log("SFX already playing same clip, skipping Play()");
         }
     }
 
@@ -71,30 +61,11 @@ public class AudioManager : MonoBehaviour
         SFXSource.Stop();
     }
 
-    //public void PlayOnceSFX(AudioClip clip)
-    //{
-    //    if (gameStarted)
-    //    {
-    //        SFXSource.PlayOneShot(clip);
-    //    }
-    //}
-
-    //public void PlayLoopSFX(AudioClip clip)
-    //{
-    //    if(!loopSFXSource.isPlaying || loopSFXSource.clip != clip)
-    //    {
-    //        loopSFXSource.clip = clip;
-    //        loopSFXSource.loop = true;
-    //        loopSFXSource.Play();
-    //    }
-    //}
-
-    //public void StopLoopSFX()
-    //{
-    //    if (loopSFXSource.isPlaying)
-    //    {
-    //        loopSFXSource.Stop();
-    //        loopSFXSource.clip = null;
-    //    }
-    //}
+    public void PlayOnceSFX(AudioClip clip)
+    {
+        if (gameStarted)
+        {
+            SFXSource.PlayOneShot(clip);
+        }
+    }
 }
