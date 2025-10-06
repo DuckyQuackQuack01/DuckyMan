@@ -26,7 +26,8 @@ public class CherryController : MonoBehaviour
         while (true)
         {
             SpawnCherry();
-            yield return MoveCherry();
+            
+            yield return new WaitUntil(() => currentCherry == null);
 
             yield return new WaitForSeconds(spawnDelay);
         }
@@ -35,89 +36,73 @@ public class CherryController : MonoBehaviour
     private void SpawnCherry()
     {
         int side = Random.Range(0, 4);
+        float offset = 0.1f;
+
         Vector3 start = Vector3.zero;
         Vector3 end = Vector3.zero;
 
-        float offset = 1f;
+        float randomX = Random.Range(0f, 1f);
+        float randomY = Random.Range(0f, 1f);
 
         switch (side)
         {
             case 0:
-                start = mainCamera.ViewportToWorldPoint(new Vector3(-offset, 0.5f, 0));
-                end = mainCamera.ViewportToWorldPoint(new Vector3(1 + offset, 0.5f, 0));
+                start = mainCamera.ViewportToWorldPoint(new Vector3(-offset, randomY, 0));
+                end = mainCamera.ViewportToWorldPoint(new Vector3(1 + offset, 1 - randomY, 0));
                 break;
             case 1:
-                start = mainCamera.ViewportToWorldPoint(new Vector3(1+ offset, 0.5f, 0));
-                end = mainCamera.ViewportToWorldPoint(new Vector3(-offset, 0.5f, 0));
+                start = mainCamera.ViewportToWorldPoint(new Vector3(1 + offset, randomY, 0));
+                end = mainCamera.ViewportToWorldPoint(new Vector3(-offset, 1 - randomY, 0));
                 break;
             case 2:
-                start = mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 1 + offset, 0));
-                end = mainCamera.ViewportToWorldPoint(new Vector3(0.5f, -offset, 0));
+                start = mainCamera.ViewportToWorldPoint(new Vector3(randomX, 1 + offset, 0));
+                end = mainCamera.ViewportToWorldPoint(new Vector3(1 - randomX, -offset, 0));
                 break;
             case 3:
-                start = mainCamera.ViewportToWorldPoint(new Vector3(0.5f, -offset, 0));
-                end = mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 1 + offset, 0));
+                start = mainCamera.ViewportToWorldPoint(new Vector3(randomX, -offset, 0));
+                end = mainCamera.ViewportToWorldPoint(new Vector3(1 - randomX, 1 + offset, 0));
                 break;
         }
 
         start.z = 0;
         end.z = 0;
-
-        Vector3 mid = levelCenter.position;
         
         currentCherry = Instantiate(cherry, start, Quaternion.identity);
 
-        SpriteRenderer sr = currentCherry.GetComponent<SpriteRenderer>();
+        var sr = currentCherry.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
             sr.sortingOrder = 999;
+            sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
         }
 
         Collider2D col = currentCherry.GetComponent<Collider2D>();
         if(col != null)
         {
-            col.enabled = false;
+            col.isTrigger = true;
         }
 
-        StartCoroutine(MoveInTwoPhases(start, mid, end));
+        StartCoroutine(MoveInLine(start, levelCenter.position, end));
     }
 
-    private IEnumerator MoveCherry()
+    private IEnumerator MoveInLine(Vector3 start, Vector3 center, Vector3 end)
     {
-        while (currentCherry != null) 
-        {
-            yield return null;
-        }
-    }
-
-    private IEnumerator MoveInTwoPhases(Vector3 start, Vector3 mid, Vector3 end)
-    {
-        float halfway = Vector3.Distance(start, mid) / moveSpeed;
-        float remaining = Vector3.Distance(mid, end) / moveSpeed;
-
+        float totalDistance = Vector3.Distance(start, end);
+        float totalTime = totalDistance / moveSpeed;
         float elapsed = 0f;
 
-        while (elapsed < halfway)
+        while (elapsed < totalTime)
         {
             if(currentCherry == null)
             {
                 yield break;
             }
             elapsed += Time.deltaTime;
-            currentCherry.transform.position = Vector3.Lerp(start, mid, elapsed / halfway);
-            yield return null;
-        }
+            float t = elapsed / totalTime;
 
-        elapsed = 0f;
-
-        while(elapsed < remaining)
-        {
-            if(currentCherry == null)
-            {
-                yield break;
-            }
-            elapsed += Time.deltaTime;
-            currentCherry.transform.position = Vector3.Lerp(mid, end, elapsed / remaining);
+            Vector3 midpoint = Vector3.Lerp(start, center, t);
+            currentCherry.transform.position = Vector3.Lerp(midpoint, end, t);
+            
             yield return null;
         }
 
