@@ -4,11 +4,19 @@ using UnityEngine.Tilemaps;
 
 public class PacStudentController : MonoBehaviour
 {
+    [Header("--------Movement--------")]
     public float moveSpeed = 5f;
+
+    [Header("--------Tile Maps--------")]
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
     public Tilemap palletTileMap;
+    public Tilemap teleporterTilemap;
 
+    public int leftTunnelX = -11;
+    public int RightTunnelX = 16;
+
+    [Header("--------Audio and Effects--------")]
     public AudioManager audioManager;
     public ParticleSystem dust;
     public ParticleSystem wallBump;
@@ -132,6 +140,12 @@ public class PacStudentController : MonoBehaviour
 
         transform.position = target;
         currentGridPos = nextGrid;
+
+        if (teleporterTilemap.HasTile(currentGridPos))
+        {
+            HandleTeleport();
+            yield break;
+        }
 
         Vector3Int lastTile = currentGridPos + DirFromInput(lastInput);
         if (!string.IsNullOrEmpty(lastInput) && IsWalkable(lastTile))
@@ -277,6 +291,30 @@ public class PacStudentController : MonoBehaviour
             audioManager.StopSFX();
             audioManager.PlaySFX(audioManager.duckHitWall, false);
             isMovingSoundPlaying = true;
+        }
+    }
+
+    private void HandleTeleport()
+    {
+        Debug.Log($"Current grid X: {currentGridPos.x}");
+        if (currentGridPos.x <= leftTunnelX)
+        {
+            currentGridPos = new Vector3Int(RightTunnelX, currentGridPos.y, 0);
+            transform.position = GridToWorld(currentGridPos);
+            currentInput = "A";
+            Debug.Log("something1");
+        } else if (currentGridPos.x >= RightTunnelX)
+        {
+            Debug.Log("something2");
+            currentGridPos = new Vector3Int(leftTunnelX, currentGridPos.y, 0);
+            transform.position = GridToWorld(currentGridPos);
+            currentInput = "D";
+        }
+
+        Vector3Int nextPos = currentGridPos + DirFromInput(currentInput);
+        if (IsWalkable(nextPos))
+        {
+            StartCoroutine(MoveTo(nextPos));
         }
     }
 }
