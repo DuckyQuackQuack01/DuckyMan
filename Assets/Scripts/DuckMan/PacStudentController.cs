@@ -11,13 +11,14 @@ public class PacStudentController : MonoBehaviour
 
     public AudioManager audioManager;
     public ParticleSystem dust;
+    public ParticleSystem wallBump;
 
     private Vector3Int currentGridPos;
 
     private bool isMoving = false;
     private bool isMovingSoundPlaying = false;
 
-    private string lastInput = ""; 
+    private string lastInput = "";
     private string currentInput = "D";
 
     private Animator animator;
@@ -34,19 +35,22 @@ public class PacStudentController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             lastInput = "W";
+            isMovingSoundPlaying = false;
         }
-            
         if (Input.GetKeyDown(KeyCode.A))
         {
             lastInput = "A";
+            isMovingSoundPlaying = false;
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             lastInput = "S";
+            isMovingSoundPlaying = false;
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             lastInput = "D";
+            isMovingSoundPlaying = false;
         }
 
         if (!isMoving)
@@ -64,13 +68,19 @@ public class PacStudentController : MonoBehaviour
     {
         Vector3Int nextPos;
 
-       if (!string.IsNullOrEmpty(lastInput))
+        if (!string.IsNullOrEmpty(lastInput))
         {
             nextPos = currentGridPos + DirFromInput(lastInput);
             if (IsWalkable(nextPos))
             {
                 currentInput = lastInput;
                 StartCoroutine(MoveTo(nextPos));
+                return;
+            }
+            else
+            {
+                WallCollision(nextPos);
+                lastInput = "";
                 return;
             }
         }
@@ -81,6 +91,12 @@ public class PacStudentController : MonoBehaviour
             if (IsWalkable(nextPos))
             {
                 StartCoroutine(MoveTo(nextPos));
+                return;
+            }
+            else
+            {
+                WallCollision(nextPos);
+                currentInput = "";
                 return;
             }
         }
@@ -137,14 +153,25 @@ public class PacStudentController : MonoBehaviour
 
     private void StopMovementEffects()
     {
-        if (dust.isPlaying) dust.Stop();
-        audioManager.StopSFX();
-        isMovingSoundPlaying = false;
+        if (dust.isPlaying)
+        {
+            dust.Stop();
+        }
+
+        if (isMovingSoundPlaying)
+        {
+            PlayWallHitSound();
+            isMovingSoundPlaying = false;
+        }
     }
 
     private void PlayMovementEffects()
     {
-        if (!dust.isPlaying) dust.Play();
+        if (!dust.isPlaying)
+        {
+            dust.Play();
+        }
+        
         if (!isMovingSoundPlaying)
         {
             audioManager.PlaySFX(audioManager.duckWalk, true);
@@ -184,7 +211,7 @@ public class PacStudentController : MonoBehaviour
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -192,18 +219,64 @@ public class PacStudentController : MonoBehaviour
     {
         switch (input)
         {
-            case "W": 
-                animator.Play("DuckTop_anim"); 
+            case "W":
+                animator.Play("DuckTop_anim");
                 break;
-            case "S": 
-                animator.Play("DuckDown_anim"); 
+            case "S":
+                animator.Play("DuckDown_anim");
                 break;
-            case "A": 
-                animator.Play("DuckLeft_anim"); 
+            case "A":
+                animator.Play("DuckLeft_anim");
                 break;
-            case "D": 
-                animator.Play("DuckRight_anim"); 
+            case "D":
+                animator.Play("DuckRight_anim");
                 break;
+        }
+    }
+
+    private void WallCollision(Vector3Int wallPos)
+    {
+        Vector3 worldPos = GridToWorld(wallPos);
+
+        wallBump.transform.position = worldPos;
+
+        string direction = !string.IsNullOrEmpty(lastInput) ? lastInput : currentInput;
+
+        float rotationZ = 0f;
+
+        switch (direction)
+        {
+            case "D":
+                rotationZ = 150f;
+                break;
+            case "A":
+                rotationZ = -20f;
+                break;
+            case "S":
+                rotationZ = 68f;
+                break;
+            case "W":
+                rotationZ = -111f;
+                break;
+        }
+
+        wallBump.transform.eulerAngles = new Vector3(0f, 0f, rotationZ);
+
+        wallBump.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        wallBump.Play();
+
+        PlayWallHitSound();
+
+        transform.position = GridToWorld(currentGridPos);
+    }
+
+    private void PlayWallHitSound()
+    {
+        if (!isMovingSoundPlaying)
+        {
+            audioManager.StopSFX();
+            audioManager.PlaySFX(audioManager.duckHitWall, false);
+            isMovingSoundPlaying = true;
         }
     }
 }
