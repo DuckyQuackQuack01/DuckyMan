@@ -167,19 +167,19 @@ public class PacStudentController : MonoBehaviour
 
         TileBase pelletTile = palletTileMap.GetTile(currentGridPos);
 
-        if (pelletTile == powerPelletTile)
-        {
-            palletTileMap.SetTile(currentGridPos, null);
-            InGameUI.Instance.AddScore(50);
-            //GameManager.Instance.SetGhostState(GhostState.Scared);
-            //audioManager.PlayMusic(audioManager.ghostMode);
-            //InGameUI.Instance.StartGhostTimer(10f);
-        }
-        else
+        if (palletTileMap.HasTile(currentGridPos))
         {
             palletTileMap.SetTile(currentGridPos, null);
             InGameUI.Instance.AddScore(10);
             audioManager.PlaySFX(audioManager.duckEat, false);
+        } else if (powerPelletTile.HasTile(currentGridPos))
+        {
+            powerPelletTile.SetTile(currentGridPos, null);
+
+            InGameUI.Instance.AddScore(50);
+            // GameManager.Instance.SetGhostState(GhostState.Scared);
+            audioManager.PlayMusic(audioManager.ghostMode, true);
+            InGameUI.Instance.StartGhostTimer(10f);
         }
     }
 

@@ -40,10 +40,17 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PlayMusic(AudioClip clip, bool loop = true)
     {
+        if (musicSource.clip == clip && musicSource.isPlaying)
+        {
+            return;
+        }           
 
+        musicSource.Stop();
+        musicSource.clip = clip;
+        musicSource.loop = loop;
+        musicSource.Play();
     }
 
     public void PlaySFX(AudioClip clip, bool loop = false)
