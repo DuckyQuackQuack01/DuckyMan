@@ -13,7 +13,7 @@ public class PacStudentController : MonoBehaviour
     public Tilemap palletTileMap;
     public Tilemap teleporterTilemap;
 
-    public int leftTunnelX = -11;
+    public int LeftTunnelX = -11;
     public int RightTunnelX = 16;
 
     [Header("--------Audio and Effects--------")]
@@ -204,7 +204,14 @@ public class PacStudentController : MonoBehaviour
 
     private Vector2 GridToWorld(Vector3Int gridPos)
     {
-        return wallTilemap.CellToWorld(gridPos) + wallTilemap.cellSize / 2;
+        Vector2 worldPos = wallTilemap.CellToWorld(gridPos) + wallTilemap.cellSize / 2;
+
+        if (currentInput == "A" || currentInput == "D")
+        {
+            worldPos.y += 0.08f;
+        }
+
+        return worldPos;
     }
 
     private Vector3Int WorldToGrid(Vector2 worldPos)
@@ -296,17 +303,15 @@ public class PacStudentController : MonoBehaviour
 
     private void HandleTeleport()
     {
-        Debug.Log($"Current grid X: {currentGridPos.x}");
-        if (currentGridPos.x <= leftTunnelX)
+        if (currentGridPos.x <= LeftTunnelX)
         {
             currentGridPos = new Vector3Int(RightTunnelX, currentGridPos.y, 0);
             transform.position = GridToWorld(currentGridPos);
             currentInput = "A";
-            Debug.Log("something1");
-        } else if (currentGridPos.x >= RightTunnelX)
+        }
+        else if (currentGridPos.x >= RightTunnelX)
         {
-            Debug.Log("something2");
-            currentGridPos = new Vector3Int(leftTunnelX, currentGridPos.y, 0);
+            currentGridPos = new Vector3Int(LeftTunnelX, currentGridPos.y, 0);
             transform.position = GridToWorld(currentGridPos);
             currentInput = "D";
         }
