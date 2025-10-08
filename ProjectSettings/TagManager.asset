@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Pellet
   - Chicken
+  - Cherry
   layers:
   - Default
   - TransparentFX

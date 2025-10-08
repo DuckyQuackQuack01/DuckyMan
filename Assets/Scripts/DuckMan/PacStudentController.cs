@@ -11,6 +11,7 @@ public class PacStudentController : MonoBehaviour
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
     public Tilemap palletTileMap;
+    public Tilemap powerPelletTile;
     public Tilemap teleporterTilemap;
 
     public int LeftTunnelX = -11;
@@ -164,12 +165,20 @@ public class PacStudentController : MonoBehaviour
             StopMovementEffects();
         }
 
-        if (palletTileMap.HasTile(currentGridPos))
+        TileBase pelletTile = palletTileMap.GetTile(currentGridPos);
+
+        if (pelletTile == powerPelletTile)
         {
             palletTileMap.SetTile(currentGridPos, null);
-
+            InGameUI.Instance.AddScore(50);
+            //GameManager.Instance.SetGhostState(GhostState.Scared);
+            //audioManager.PlayMusic(audioManager.ghostMode);
+            //InGameUI.Instance.StartGhostTimer(10f);
+        }
+        else
+        {
+            palletTileMap.SetTile(currentGridPos, null);
             InGameUI.Instance.AddScore(10);
-
             audioManager.PlaySFX(audioManager.duckEat, false);
         }
     }
@@ -329,6 +338,18 @@ public class PacStudentController : MonoBehaviour
         if (IsWalkable(nextPos))
         {
             StartCoroutine(MoveTo(nextPos));
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Cherry"))
+        {
+            Destroy(collision.gameObject);
+
+            InGameUI.Instance.AddScore(100);
+
+            audioManager.PlaySFX(audioManager.duckEat, false);
         }
     }
 }
