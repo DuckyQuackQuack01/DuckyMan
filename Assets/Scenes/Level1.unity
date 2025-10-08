@@ -18023,6 +18023,7 @@ GameObject:
   - component: {fileID: 1527700508}
   - component: {fileID: 1527700507}
   - component: {fileID: 1527700506}
+  - component: {fileID: 1527700510}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -18118,6 +18119,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1527700510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527700505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99ceac43cd32e5b4b97f26d44fff5f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 1361743240}
 --- !u!1 &1531478359
 GameObject:
   m_ObjectHideFlags: 0
@@ -18156,7 +18170,7 @@ MonoBehaviour:
   ghostMode: {fileID: 8300000, guid: 2d75b5fde1c684244847c876f8679dac, type: 3}
   duckWalk: {fileID: 8300000, guid: 9b3a9f6d65bcbfc4c9d933a229d9ad98, type: 3}
   duckDead: {fileID: 8300000, guid: 66d5428020fd3d14eb53ffca1b222553, type: 3}
-  duckEat: {fileID: 8300000, guid: 3c438d3c821b9944db3201f0134c2e0a, type: 3}
+  duckEat: {fileID: 8300000, guid: 2d42dea73f447c8469ffbabe7b82d2c5, type: 3}
   duckHitWall: {fileID: 8300000, guid: 3f966bff6fcdcbd458e425b64f6f8489, type: 3}
   gameStarted: 0
 --- !u!4 &1531478361
@@ -24544,7 +24558,7 @@ Tilemap:
       - {fileID: 2398286792768074896, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
       - {fileID: 6577361884029154954, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
       - {fileID: 5811402714988753931, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 15, y: -19, z: 0}
@@ -24566,7 +24580,7 @@ Tilemap:
       - {fileID: 2398286792768074896, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
       - {fileID: 6577361884029154954, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
       - {fileID: 5811402714988753931, guid: d6df396c3fa9e4440be10f9962777cfc, type: 3}
-      m_AnimationSpeed: 7
+      m_AnimationSpeed: 7.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 15, y: 4, z: 0}

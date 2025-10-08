@@ -163,6 +163,15 @@ public class PacStudentController : MonoBehaviour
             isMoving = false;
             StopMovementEffects();
         }
+
+        if (palletTileMap.HasTile(currentGridPos))
+        {
+            palletTileMap.SetTile(currentGridPos, null);
+
+            InGameUI.Instance.AddScore(10);
+
+            audioManager.PlaySFX(audioManager.duckEat, false);
+        }
     }
 
     private void StopMovementEffects()
