@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -21,22 +21,32 @@ public class PacStudentController : MonoBehaviour
     public AudioManager audioManager;
     public ParticleSystem dust;
     public ParticleSystem wallBump;
+    public ParticleSystem deathEffect;
 
     private Vector3Int currentGridPos;
 
     private bool isMoving = false;
     private bool isMovingSoundPlaying = false;
+    private bool isDead = false;
+
+    private Vector3 startPosition;
+    private int currentLives = 3;
 
     private string lastInput = "";
     private string currentInput = "D";
 
     private Animator animator;
+    private Coroutine moveCoroutine;
 
     void Start()
     {
-        currentGridPos = WorldToGrid(transform.position);
-        transform.position = GridToWorld(currentGridPos);
+        Vector3Int startGridPos = new Vector3Int(-10, 6, 0);
+        startPosition = GridToWorld(startGridPos);
+        transform.position = startPosition;
+        currentGridPos = startGridPos;
         animator = GetComponent<Animator>();
+
+        InGameUI.Instance.UpdateLivesDisplay(currentLives);
     }
 
     void Update()
@@ -83,7 +93,7 @@ public class PacStudentController : MonoBehaviour
             if (IsWalkable(nextPos))
             {
                 currentInput = lastInput;
-                StartCoroutine(MoveTo(nextPos));
+                moveCoroutine = StartCoroutine(MoveTo(nextPos));
                 return;
             }
             else
@@ -99,7 +109,7 @@ public class PacStudentController : MonoBehaviour
             nextPos = currentGridPos + DirFromInput(currentInput);
             if (IsWalkable(nextPos))
             {
-                StartCoroutine(MoveTo(nextPos));
+                moveCoroutine = StartCoroutine(MoveTo(nextPos));
                 return;
             }
             else
@@ -177,8 +187,8 @@ public class PacStudentController : MonoBehaviour
             powerPelletTile.SetTile(currentGridPos, null);
 
             InGameUI.Instance.AddScore(50);
-            // GameManager.Instance.SetGhostState(GhostState.Scared);
             audioManager.PlayMusic(audioManager.ghostMode, true);
+            GhostStateManager.SetAllGhostsScared();
             InGameUI.Instance.StartGhostTimer(10f);
         }
     }
@@ -203,7 +213,7 @@ public class PacStudentController : MonoBehaviour
         {
             dust.Play();
         }
-        
+
         if (!isMovingSoundPlaying)
         {
             audioManager.PlaySFX(audioManager.duckWalk, true);
@@ -351,5 +361,73 @@ public class PacStudentController : MonoBehaviour
 
             audioManager.PlaySFX(audioManager.duckEat, false);
         }
+
+        if (collision.CompareTag("Ghost"))
+        {
+
+            GhostStateManager ghost = collision.GetComponent<GhostStateManager>();
+            if (ghost.currentState == GhostStateManager.GhostState.Normal && !isDead)
+            {
+                StartCoroutine(HandleDeath());
+            }
+        }
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        Debug.Log("HandleDeath() started.");
+
+        isDead = true;
+
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+            moveCoroutine = null;
+        }
+        StopMovementEffects();
+        Debug.Log("Stopped movement coroutine and movement effects.");
+
+        Debug.Log("Stopped coroutines and movement effects.");
+
+        foreach (var ghost in GhostStateManager.allGhosts)
+        {
+            ghost.enabled = false;
+        }
+        Debug.Log("All ghosts disabled.");
+
+        animator.Play("DuckDead_anim");
+        deathEffect.transform.position = transform.position;
+        deathEffect.Play();
+        audioManager.PlaySFX(audioManager.duckDead, false);
+        Debug.Log("Death animation and sound started.");
+
+        yield return new WaitForSeconds(1.5f);
+        Debug.Log("1.5 seconds passed, continuing...");
+
+        currentLives--;
+        InGameUI.Instance.UpdateLivesDisplay(currentLives);
+        Debug.Log($"Lives left: {currentLives}");
+
+        if (currentLives <= 0)
+        {
+            Debug.Log("GameOver!");
+            yield break;
+        }
+
+        Vector3Int startGridPos = new Vector3Int(-10, 6, 0);
+        startPosition = GridToWorld(startGridPos);
+        transform.position = startPosition;
+        currentGridPos = startGridPos;
+        Debug.Log($"Player reset to grid: {currentGridPos}");
+
+        foreach (var ghost in GhostStateManager.allGhosts)
+        {
+            ghost.enabled = true;
+        }
+        Debug.Log("Ghosts re-enabled.");
+
+        isDead = false;
+        audioManager.PlayMusic(audioManager.background, true);
+        Debug.Log("Player revived and background music playing.");
     }
 }

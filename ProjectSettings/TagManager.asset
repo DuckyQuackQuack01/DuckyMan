@@ -9,6 +9,7 @@ TagManager:
   - Pellet
   - Chicken
   - Cherry
+  - Ghost
   layers:
   - Default
   - TransparentFX

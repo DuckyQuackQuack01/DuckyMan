@@ -2,19 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
 
     public static InGameUI Instance;
+    public AudioManager audioManager;
 
     public TMP_Text scoreText;
     public TMP_Text scareTimerDisplay;
     public TMP_Text scaredTimerTitle;
+    public RectTransform livesContainer;
+
+    public int maxLives = 3;
 
     private int score = 0;
     private Coroutine timerCoroutine;
-    
+    private float widthPerLife = 18f;
+
     void Awake()
     {
         Instance = this;
@@ -26,9 +32,10 @@ public class InGameUI : MonoBehaviour
         UpdateScoreText();
         scaredTimerTitle.gameObject.SetActive(false);
         scareTimerDisplay.gameObject.SetActive(false);
+
+        UpdateLivesDisplay(maxLives);
     }
 
-    // Update is called once per frame
     public void AddScore(int amount)
     {
         score += amount;
@@ -42,7 +49,20 @@ public class InGameUI : MonoBehaviour
 
     public void StartGhostTimer(float duration)
     {
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+        }
+        
         timerCoroutine = StartCoroutine(GhostTimerRoutine(duration));
+    }
+
+    public void UpdateLivesDisplay(int currentLives)
+    {
+        float newWidth = widthPerLife * currentLives;
+
+        RectTransform rt = livesContainer;
+        rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
     }
 
     private IEnumerator GhostTimerRoutine(float duration)
@@ -57,9 +77,9 @@ public class InGameUI : MonoBehaviour
             int minutes = Mathf.FloorToInt(remaining / 60);
             int seconds = Mathf.FloorToInt(remaining % 60);
             int milliseconds = Mathf.FloorToInt((remaining * 1000) % 1000);
+            int shortenedMs = (milliseconds / 10) % 100;
 
-
-            scareTimerDisplay.text = $"{minutes:00}:{seconds:00}:{milliseconds:00}";
+            scareTimerDisplay.text = $"{minutes:00}:{seconds:00}:{shortenedMs:00}";
 
             yield return null;
             remaining -= Time.deltaTime;
@@ -67,6 +87,8 @@ public class InGameUI : MonoBehaviour
 
         scaredTimerTitle.gameObject.SetActive(false);
         scareTimerDisplay.gameObject.SetActive(false);
+        audioManager.PlayMusic(audioManager.background, true);
         scareTimerDisplay.text = "00:00:00";
+        GhostStateManager.SetAllGhostsNormal();
     }
 }
