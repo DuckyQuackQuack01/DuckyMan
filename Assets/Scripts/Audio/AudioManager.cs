@@ -75,4 +75,12 @@ public class AudioManager : MonoBehaviour
             SFXSource.PlayOneShot(clip);
         }
     }
+
+    public void StopMusic()
+    {
+        if (musicSource.isPlaying)
+        {
+            musicSource.Stop();
+        }
+    }
 }

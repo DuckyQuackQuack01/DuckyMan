@@ -23571,7 +23571,6 @@ MonoBehaviour:
   scaredTimerTitle: {fileID: 1068499782}
   livesContainer: {fileID: 1115714239}
   maxLives: 3
-  currentLives: 0
 --- !u!1 &1531478359
 GameObject:
   m_ObjectHideFlags: 0

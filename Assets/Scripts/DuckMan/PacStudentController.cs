@@ -28,6 +28,7 @@ public class PacStudentController : MonoBehaviour
     private bool isMoving = false;
     private bool isMovingSoundPlaying = false;
     private bool isDead = false;
+    private bool canMove = true;
 
     private Vector3 startPosition;
     private int currentLives = 3;
@@ -45,19 +46,40 @@ public class PacStudentController : MonoBehaviour
         transform.position = startPosition;
         currentGridPos = startGridPos;
         animator = GetComponent<Animator>();
+        canMove = true;
 
         InGameUI.Instance.UpdateLivesDisplay(currentLives);
     }
 
     void Update()
     {
+        if (isDead)
+        {
+            return;
+        }
+
+        if (!canMove)
+        {
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) ||
+                Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+            {
+                canMove = true;
+                animator.speed = 1f;
+                audioManager.PlayMusic(audioManager.background, true);
+            }
+            else
+            {
+                return;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.W))
         {
             lastInput = "W";
             isMovingSoundPlaying = false;
         }
         if (Input.GetKeyDown(KeyCode.A))
-        {
+        { 
             lastInput = "A";
             isMovingSoundPlaying = false;
         }
@@ -85,6 +107,11 @@ public class PacStudentController : MonoBehaviour
 
     private void TryMove()
     {
+        if (isDead)
+        {
+            return;
+        }
+        
         Vector3Int nextPos;
 
         if (!string.IsNullOrEmpty(lastInput))
@@ -125,6 +152,11 @@ public class PacStudentController : MonoBehaviour
 
     private IEnumerator MoveTo(Vector3Int nextGrid)
     {
+        if (isDead)
+        {
+            yield break;
+        }
+
         isMoving = true;
 
         PlayAnimation(currentInput);
@@ -175,22 +207,7 @@ public class PacStudentController : MonoBehaviour
             StopMovementEffects();
         }
 
-        TileBase pelletTile = palletTileMap.GetTile(currentGridPos);
-
-        if (palletTileMap.HasTile(currentGridPos))
-        {
-            palletTileMap.SetTile(currentGridPos, null);
-            InGameUI.Instance.AddScore(10);
-            audioManager.PlaySFX(audioManager.duckEat, false);
-        } else if (powerPelletTile.HasTile(currentGridPos))
-        {
-            powerPelletTile.SetTile(currentGridPos, null);
-
-            InGameUI.Instance.AddScore(50);
-            audioManager.PlayMusic(audioManager.ghostMode, true);
-            GhostStateManager.SetAllGhostsScared();
-            InGameUI.Instance.StartGhostTimer(10f);
-        }
+        CheckPelletAtCurrentPosition();
     }
 
     private void StopMovementEffects()
@@ -375,59 +392,79 @@ public class PacStudentController : MonoBehaviour
 
     private IEnumerator HandleDeath()
     {
-        Debug.Log("HandleDeath() started.");
-
-        isDead = true;
-
-        if (moveCoroutine != null)
+        if (isDead)
         {
-            StopCoroutine(moveCoroutine);
-            moveCoroutine = null;
-        }
-        StopMovementEffects();
-        Debug.Log("Stopped movement coroutine and movement effects.");
-
-        Debug.Log("Stopped coroutines and movement effects.");
-
-        foreach (var ghost in GhostStateManager.allGhosts)
-        {
-            ghost.enabled = false;
-        }
-        Debug.Log("All ghosts disabled.");
-
-        animator.Play("DuckDead_anim");
-        deathEffect.transform.position = transform.position;
-        deathEffect.Play();
-        audioManager.PlaySFX(audioManager.duckDead, false);
-        Debug.Log("Death animation and sound started.");
-
-        yield return new WaitForSeconds(1.5f);
-        Debug.Log("1.5 seconds passed, continuing...");
-
-        currentLives--;
-        InGameUI.Instance.UpdateLivesDisplay(currentLives);
-        Debug.Log($"Lives left: {currentLives}");
-
-        if (currentLives <= 0)
-        {
-            Debug.Log("GameOver!");
             yield break;
         }
 
-        Vector3Int startGridPos = new Vector3Int(-10, 6, 0);
-        startPosition = GridToWorld(startGridPos);
-        transform.position = startPosition;
-        currentGridPos = startGridPos;
-        Debug.Log($"Player reset to grid: {currentGridPos}");
+        isDead = true;
 
-        foreach (var ghost in GhostStateManager.allGhosts)
-        {
-            ghost.enabled = true;
+        if (moveCoroutine != null) 
+        { 
+            StopCoroutine(moveCoroutine);
         }
-        Debug.Log("Ghosts re-enabled.");
+        
+        isMoving = false;
+        isMovingSoundPlaying = false;
+        audioManager.StopSFX();
 
-        isDead = false;
-        audioManager.PlayMusic(audioManager.background, true);
-        Debug.Log("Player revived and background music playing.");
+        animator.Play("DuckDead_anim");
+
+        audioManager.StopMusic();
+        audioManager.PlaySFX(audioManager.duckDead, false);
+
+        deathEffect.Play();
+
+        currentLives--;
+        InGameUI.Instance.UpdateLivesDisplay(currentLives);
+
+        yield return new WaitForSeconds(1.5f);
+
+        if (currentLives > 0)
+        {
+            audioManager.StopSFX();
+
+            currentGridPos = new Vector3Int(-10, 6, 0);
+            transform.position = GridToWorld(currentGridPos);
+
+            CheckPelletAtCurrentPosition();
+
+            lastInput = "";
+            currentInput = "";
+            isDead = false;
+
+            canMove = false;
+            isMoving = false;
+            isMovingSoundPlaying = false;
+
+            animator.Play("DuckRight_anim", 0, 0f);
+            animator.speed = 0f;
+        }
+    }
+
+    private void CheckPelletAtCurrentPosition()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        TileBase pelletTile = palletTileMap.GetTile(currentGridPos);
+        TileBase powerTile = powerPelletTile.GetTile(currentGridPos);
+
+        if (pelletTile != null)
+        {
+            palletTileMap.SetTile(currentGridPos, null);
+            InGameUI.Instance.AddScore(10);
+            audioManager.PlaySFX(audioManager.duckEat, false);
+        }
+        else if (powerTile != null)
+        {
+            powerPelletTile.SetTile(currentGridPos, null);
+            InGameUI.Instance.AddScore(50);
+            audioManager.PlayMusic(audioManager.ghostMode, true);
+            GhostStateManager.SetAllGhostsScared();
+            InGameUI.Instance.StartGhostTimer(10f);
+        }
     }
 }
