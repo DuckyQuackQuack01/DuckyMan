@@ -10,24 +10,28 @@ public class GhostController : MonoBehaviour
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
     public Tilemap teleporterTileMap;
+    public Tilemap ghostExitWallTilemap;
 
     public Transform pacStudent;
-        
+    public int GhostID = 1;
+
     private Vector3Int currentGridPos;
     private Vector3Int previousGridPos;
-    private bool isMoving = false;
     private Coroutine moveCoroutine;
 
     private Animator animator;
     private GhostStateManager stateManager;
     private Vector3Int lastDirection;
 
+    private bool isMoving = false;
     private bool canMove = false;
-    private bool isFrozen = false;
+    private bool isFrozen = true;
+    private bool isInsideGhostHouse = true;
+    private bool isExitingHouse = true;
 
     void Start()
     {
-        Vector3Int startGridPos = new Vector3Int(0, -1, 0);
+        Vector3Int startGridPos = new Vector3Int(2, -6, 0);
         currentGridPos = startGridPos;
         transform.position = GridToWorld(currentGridPos);
 
@@ -41,13 +45,13 @@ public class GhostController : MonoBehaviour
     {
         while (true)
         {
-            if (!isMoving || isFrozen)
+            if (isFrozen)
             {
                 yield return null;
                 continue;
             }
 
-            if (!isMoving)
+            if (!isMoving && canMove)
             {
                 Vector3Int nextPos = ChooseNextTile();
                 if (nextPos != currentGridPos)
@@ -65,7 +69,6 @@ public class GhostController : MonoBehaviour
 
         Vector3Int direction = nextGrid - currentGridPos;
         lastDirection = direction;
-
         stateManager?.UpdateDirection(direction);
 
         Vector2 start = GridToWorld(currentGridPos);
@@ -78,7 +81,8 @@ public class GhostController : MonoBehaviour
         {
             if (!canMove || isFrozen)
             {
-                yield break;
+                yield return null;
+                continue;
             }
 
             elapsed += Time.deltaTime;
@@ -90,16 +94,28 @@ public class GhostController : MonoBehaviour
         transform.position = target;
         previousGridPos = currentGridPos;
         currentGridPos = nextGrid;
+
+        if (isExitingHouse && !ghostExitWallTilemap.HasTile(currentGridPos))
+        {
+            isInsideGhostHouse = false;
+            isExitingHouse = false;
+        }
+
         isMoving = false;
     }
 
     private Vector3Int ChooseNextTile()
     {
+        if (isExitingHouse)
+        {
+            return GetExitDirection();
+        }
+
         List<Vector3Int> validMoves = new List<Vector3Int>();
         Vector3Int[] directions = { Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right };
 
-        foreach (var dir in directions) 
-        { 
+        foreach (var dir in directions)
+        {
             Vector3Int candidate = currentGridPos + dir;
 
             if (teleporterTileMap.HasTile(candidate))
@@ -120,25 +136,13 @@ public class GhostController : MonoBehaviour
 
         if (validMoves.Count == 0)
         {
-            foreach (var dir in directions)
-            {
-                Vector3Int candidate = currentGridPos + dir;
-                if (IsWalkable(candidate))
-                {
-                    validMoves.Add(candidate);
-                }
-            }
-        }
-
-        if (validMoves.Count == 0)
-        {
             return currentGridPos;
         }
 
         float currentDist = Vector2.Distance(GridToWorld(currentGridPos), pacStudent.position);
         List<Vector3Int> nonCloserMoves = new List<Vector3Int>();
 
-        foreach (var move in validMoves) 
+        foreach (var move in validMoves)
         {
             float newDist = Vector2.Distance(GridToWorld(move), pacStudent.position);
             if (newDist > currentDist)
@@ -148,26 +152,66 @@ public class GhostController : MonoBehaviour
         }
 
         List<Vector3Int> choices = nonCloserMoves.Count > 0 ? nonCloserMoves : validMoves;
-
         return choices[Random.Range(0, choices.Count)];
+    }
+
+    private Vector3Int GetExitDirection()
+    {
+        Vector3Int targetExit;
+
+        if (GhostID == 1 || GhostID == 3)
+        {
+            targetExit = new Vector3Int(2, -4, 0);
+        } else
+        {
+            targetExit = new Vector3Int(2, -8, 0);
+        }
+
+        Vector3Int diff = targetExit - currentGridPos;
+        if(Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+        {
+            return currentGridPos + new Vector3Int(Mathf.Sign(diff.x) > 0 ? 1 : -1, 0, 0);
+        } else if (Mathf.Abs(diff.y) > 0)
+        {
+            return currentGridPos + new Vector3Int(0, Mathf.Sign(diff.y) > 0 ? 1 : -1, 0);
+        }
+
+        return currentGridPos;
     }
 
     private bool IsWalkable(Vector3Int gridPos)
     {
         gridPos.z = 0;
+
         if (wallTilemap.HasTile(gridPos))
         {
             return false;
         }
-        
+
         if (ghostWallTilemap.HasTile(gridPos))
         {
             return false;
         }
-        
+
         if (teleporterTileMap.HasTile(gridPos))
         {
             return false;
+        }
+
+        bool isExitTile = ghostExitWallTilemap.HasTile(gridPos);
+        bool isDead = stateManager.currentState == GhostStateManager.GhostState.Dead;
+
+
+        if (ghostWallTilemap.HasTile(gridPos))
+        {
+            if (isExitTile || isInsideGhostHouse || isDead)
+                return true;
+            return false;
+        }
+
+        if (isExitTile)
+        {
+            return true;
         }
 
         return true;
@@ -181,6 +225,16 @@ public class GhostController : MonoBehaviour
     public void EnableMovement()
     {
         canMove = true;
+        isFrozen = false;
+
+        if (!isMoving)
+        {
+            Vector3Int nextPos = ChooseNextTile();
+            if (nextPos != currentGridPos)
+            {
+                moveCoroutine = StartCoroutine(MoveTo(nextPos));
+            }
+        }
     }
 
     public void Freeze()
