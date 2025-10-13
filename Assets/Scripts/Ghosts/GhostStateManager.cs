@@ -5,7 +5,7 @@ using UnityEngine;
 public class GhostStateManager : MonoBehaviour
 {
 
-    public enum GhostState { 
+    public enum GhostState {
         Normal,
         Scared,
         Recovering,
@@ -18,13 +18,14 @@ public class GhostStateManager : MonoBehaviour
 
     private Animator animator;
     private Collider2D col;
-    
+
+    private string currentDirection = "Right";
 
     void Awake()
     {
         allGhosts.Add(this);
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +38,7 @@ public class GhostStateManager : MonoBehaviour
     {
         currentState = newState;
 
-        switch (currentState) 
+        switch (currentState)
         {
             case GhostState.Normal:
                 PlayNormalAnimation();
@@ -56,19 +57,20 @@ public class GhostStateManager : MonoBehaviour
 
     private void PlayNormalAnimation()
     {
-        string animName = ghostColour + "Chicken_Right";
+        string animName = ghostColour + "Chicken_" + currentDirection;
         animator.Play(animName);
     }
 
     private void PlayScaredAnimation()
     {
-        string animName = "SChicken_Right";
+        string animName = "SChicken_" + currentDirection;
         animator.Play(animName);
     }
 
     private void PlayRecoveringAnimation()
     {
-        animator.Play("RecoveringAnimation_Right");
+        string animName = "RecoveringAnimation_" + currentDirection;
+        animator.Play(animName);
     }
 
     private void PlayDeadAnimation()
@@ -83,7 +85,7 @@ public class GhostStateManager : MonoBehaviour
             ghost.SetState(GhostState.Normal);
         }
     }
-    
+
     public static void SetAllGhostsScared()
     {
         foreach (var ghost in allGhosts)
@@ -116,7 +118,7 @@ public class GhostStateManager : MonoBehaviour
 
         float remainingScaredTime = InGameUI.Instance.GetRemainingGhostTimer();
 
-        if(remainingScaredTime <= 0)
+        if (remainingScaredTime <= 0)
         {
             SetState(GhostState.Normal);
         } else if (remainingScaredTime <= 3f)
@@ -131,5 +133,29 @@ public class GhostStateManager : MonoBehaviour
         {
             col.enabled = true;
         }
+    }
+
+    public void UpdateDirection(Vector3Int dir)
+    {
+        if (currentState == GhostState.Scared || currentState == GhostState.Recovering || currentState == GhostState.Dead)
+        {
+            return;
+        }
+
+        if (dir == Vector3Int.left)
+        {
+            currentDirection = "Left";
+        } else if (dir == Vector3Int.right)
+        {
+            currentDirection = "Right";
+        } else if (dir == Vector3Int.up)
+        {
+            currentDirection = "Top";
+        } else if (dir == Vector3Int.down)
+        {
+            currentDirection = "Down";
+        }
+
+        PlayNormalAnimation();
     }
 }   
