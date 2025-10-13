@@ -137,25 +137,35 @@ public class GhostStateManager : MonoBehaviour
 
     public void UpdateDirection(Vector3Int dir)
     {
-        if (currentState == GhostState.Scared || currentState == GhostState.Recovering || currentState == GhostState.Dead)
-        {
-            return;
-        }
 
         if (dir == Vector3Int.left)
         {
             currentDirection = "Left";
-        } else if (dir == Vector3Int.right)
+        }
+        else if (dir == Vector3Int.right)
         {
             currentDirection = "Right";
-        } else if (dir == Vector3Int.up)
+        }
+        else if (dir == Vector3Int.up)
         {
             currentDirection = "Top";
-        } else if (dir == Vector3Int.down)
+        }
+        else if (dir == Vector3Int.down)
         {
             currentDirection = "Down";
         }
 
-        PlayNormalAnimation();
+        switch (currentState)
+        {
+            case GhostState.Normal:
+                PlayNormalAnimation();
+                break;
+            case GhostState.Scared:
+                PlayScaredAnimation();
+                break;
+            case GhostState.Recovering:
+                PlayRecoveringAnimation();
+                break;
+        }
     }
 }   

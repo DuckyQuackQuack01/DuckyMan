@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class GhostController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 2f;
 
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
@@ -22,9 +22,12 @@ public class GhostController : MonoBehaviour
     private GhostStateManager stateManager;
     private Vector3Int lastDirection;
 
+    private bool canMove = false;
+    private bool isFrozen = false;
+
     void Start()
     {
-        Vector3Int startGridPos = new Vector3Int(-1, 0, 0);
+        Vector3Int startGridPos = new Vector3Int(0, -1, 0);
         currentGridPos = startGridPos;
         transform.position = GridToWorld(currentGridPos);
 
@@ -38,6 +41,12 @@ public class GhostController : MonoBehaviour
     {
         while (true)
         {
+            if (!isMoving || isFrozen)
+            {
+                yield return null;
+                continue;
+            }
+
             if (!isMoving)
             {
                 Vector3Int nextPos = ChooseNextTile();
@@ -65,8 +74,13 @@ public class GhostController : MonoBehaviour
         float duration = distance / moveSpeed;
         float elapsed = 0f;
 
-        while (elapsed < duration) 
+        while (elapsed < duration)
         {
+            if (!canMove || isFrozen)
+            {
+                yield break;
+            }
+
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             transform.position = Vector2.Lerp(start, target, t);
@@ -82,7 +96,7 @@ public class GhostController : MonoBehaviour
     private Vector3Int ChooseNextTile()
     {
         List<Vector3Int> validMoves = new List<Vector3Int>();
-        Vector3Int[] directions = { Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right};
+        Vector3Int[] directions = { Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right };
 
         foreach (var dir in directions) 
         { 
@@ -151,11 +165,40 @@ public class GhostController : MonoBehaviour
             return false;
         }
         
+        if (teleporterTileMap.HasTile(gridPos))
+        {
+            return false;
+        }
+
         return true;
     }
 
     private Vector2 GridToWorld(Vector3Int gridPos)
     {
         return wallTilemap.CellToWorld(gridPos) + (Vector3)wallTilemap.cellSize / 2f;
+    }
+
+    public void EnableMovement()
+    {
+        canMove = true;
+    }
+
+    public void Freeze()
+    {
+        canMove = false;
+        isFrozen = true;
+        
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        isMoving = false;
+    }
+
+    public void UnFreeze()
+    {
+        isFrozen = false;
+        canMove = true;
     }
 }

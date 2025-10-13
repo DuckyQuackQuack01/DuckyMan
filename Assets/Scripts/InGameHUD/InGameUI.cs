@@ -151,6 +151,8 @@ public class InGameUI : MonoBehaviour
         PacStudentController.globallyFrozen = false;
         pacStudent.UnFreezeMovement();
 
+        EnableAllGhosts();
+
         elapsedTime = 0f;   
         gameTimerRunning = true;
     }
@@ -186,22 +188,40 @@ public class InGameUI : MonoBehaviour
     public void GameOver()
     {
         gameTimerRunning = false;
-
         PacStudentController.globallyFrozen = true;
         pacStudent.FreezeMovement();
+
+        FreezeAllGhosts();
 
         overlayImage.gameObject.SetActive(true);
         screenText.gameObject.SetActive(true);
         screenText.text = "GAME OVER";
 
         SaveHighScore();
-
         StartCoroutine(GameOverRoutine());
+    }
+
+    private void FreezeAllGhosts()
+    {
+        GhostController[] ghosts = FindObjectsByType<GhostController>(FindObjectsSortMode.None);
+        foreach (var ghost in ghosts)
+        {
+            ghost.Freeze();
+        }
     }
 
     private IEnumerator GameOverRoutine()
     {
         yield return new WaitForSeconds(3f);
         SceneManager.LoadScene("StartScene");
+    }
+
+    private void EnableAllGhosts()
+    {
+        GhostController[] ghosts = FindObjectsByType<GhostController>(FindObjectsSortMode.None);
+        foreach (var ghost in ghosts)
+        {
+            ghost.EnableMovement();
+        }
     }
 }
