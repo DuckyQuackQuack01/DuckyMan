@@ -1183,7 +1183,6 @@ GameObject:
   m_Component:
   - component: {fileID: 648402827}
   - component: {fileID: 648402831}
-  - component: {fileID: 648402830}
   - component: {fileID: 648402829}
   - component: {fileID: 648402828}
   m_Layer: 5
@@ -1257,7 +1256,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 648402830}
+      - m_Target: {fileID: 1885129841}
         m_TargetAssemblyTypeName: StartMenuComponent, Assembly-CSharp
         m_MethodName: OnExitClick
         m_Mode: 1
@@ -1299,18 +1298,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &648402830
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 648402826}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70231caba7adbb943b1e0ce98dedc7c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &648402831
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1429,7 +1416,7 @@ GameObject:
   - component: {fileID: 677613577}
   - component: {fileID: 677613576}
   m_Layer: 5
-  m_Name: Level2_Score
+  m_Name: Level1_Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1874,7 +1861,7 @@ GameObject:
   - component: {fileID: 821864411}
   - component: {fileID: 821864410}
   m_Layer: 5
-  m_Name: Level1_Score
+  m_Name: Level2_Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3027,7 +3014,6 @@ GameObject:
   - component: {fileID: 1154216204}
   - component: {fileID: 1154216208}
   - component: {fileID: 1154216207}
-  - component: {fileID: 1154216206}
   - component: {fileID: 1154216205}
   m_Layer: 5
   m_Name: Level2_Button
@@ -3112,18 +3098,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1154216206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154216203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70231caba7adbb943b1e0ce98dedc7c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1154216207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3565,7 +3539,6 @@ GameObject:
   - component: {fileID: 1200998778}
   - component: {fileID: 1200998782}
   - component: {fileID: 1200998780}
-  - component: {fileID: 1200998783}
   - component: {fileID: 1200998779}
   m_Layer: 5
   m_Name: Level1_Button
@@ -3638,7 +3611,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1200998783}
+      - m_Target: {fileID: 1885129841}
         m_TargetAssemblyTypeName: StartMenuComponent, Assembly-CSharp
         m_MethodName: OnStartClick
         m_Mode: 1
@@ -3688,18 +3661,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1200998777}
   m_CullTransparentMesh: 1
---- !u!114 &1200998783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1200998777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70231caba7adbb943b1e0ce98dedc7c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1262873180
 GameObject:
   m_ObjectHideFlags: 0
@@ -3946,7 +3907,7 @@ GameObject:
   - component: {fileID: 1283883715}
   - component: {fileID: 1283883714}
   m_Layer: 5
-  m_Name: Level1_Time
+  m_Name: Level2_Time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4906,7 +4867,7 @@ GameObject:
   - component: {fileID: 1722596941}
   - component: {fileID: 1722596940}
   m_Layer: 5
-  m_Name: Level2_Time
+  m_Name: Level1_Time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5574,6 +5535,7 @@ GameObject:
   - component: {fileID: 1885129839}
   - component: {fileID: 1885129838}
   - component: {fileID: 1885129837}
+  - component: {fileID: 1885129841}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -5664,10 +5626,10 @@ RectTransform:
   - {fileID: 648402827}
   - {fileID: 1263076694}
   - {fileID: 866193764}
-  - {fileID: 821864409}
   - {fileID: 677613575}
-  - {fileID: 1283883713}
   - {fileID: 1722596939}
+  - {fileID: 821864409}
+  - {fileID: 1283883713}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5675,6 +5637,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1885129841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885129836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70231caba7adbb943b1e0ce98dedc7c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highScoreText: {fileID: 677613576}
+  highScoreTimeText: {fileID: 1722596940}
 --- !u!1 &1948365576
 GameObject:
   m_ObjectHideFlags: 0

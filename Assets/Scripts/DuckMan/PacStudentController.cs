@@ -11,7 +11,7 @@ public class PacStudentController : MonoBehaviour
     public Tilemap wallTilemap;
     public Tilemap ghostWallTilemap;
     public Tilemap palletTileMap;
-    public Tilemap powerPelletTile;
+    public Tilemap powerPalletTile;
     public Tilemap teleporterTilemap;
 
     public int LeftTunnelX = -11;
@@ -22,6 +22,8 @@ public class PacStudentController : MonoBehaviour
     public ParticleSystem dust;
     public ParticleSystem wallBump;
     public ParticleSystem deathEffect;
+
+    public static bool globallyFrozen = false;
 
     private Vector3Int currentGridPos;
 
@@ -46,14 +48,14 @@ public class PacStudentController : MonoBehaviour
         transform.position = startPosition;
         currentGridPos = startGridPos;
         animator = GetComponent<Animator>();
-        canMove = true;
+        FreezeMovement();
 
         InGameUI.Instance.UpdateLivesDisplay(currentLives);
     }
 
     void Update()
     {
-        if (isDead)
+        if (isDead || globallyFrozen)
         {
             return;
         }
@@ -63,9 +65,8 @@ public class PacStudentController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) ||
                 Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
             {
-                canMove = true;
-                animator.speed = 1f;
                 audioManager.PlayMusic(audioManager.background, true);
+                UnFreezeMovement();
             }
             else
             {
@@ -387,9 +388,16 @@ public class PacStudentController : MonoBehaviour
             {
                 StartCoroutine(HandleDeath());
             }
+            else if (ghost.currentState == GhostStateManager.GhostState.Scared)
+            {
+                ghost.SetDead();
+                InGameUI.Instance.AddScore(300);
+                audioManager.PlaySFX(audioManager.duckEat, false);
+                audioManager.PlayMusic(audioManager.deathMode, true);
+            }
         }
     }
-
+    
     private IEnumerator HandleDeath()
     {
         if (isDead)
@@ -399,29 +407,33 @@ public class PacStudentController : MonoBehaviour
 
         isDead = true;
 
-        if (moveCoroutine != null) 
-        { 
+        if (moveCoroutine != null)
+        {
             StopCoroutine(moveCoroutine);
         }
-        
+
         isMoving = false;
         isMovingSoundPlaying = false;
         audioManager.StopSFX();
 
+        animator.speed = 1f;
         animator.Play("DuckDead_anim");
 
         audioManager.StopMusic();
         audioManager.PlaySFX(audioManager.duckDead, false);
 
         deathEffect.Play();
-
         currentLives--;
         InGameUI.Instance.UpdateLivesDisplay(currentLives);
 
-        yield return new WaitForSeconds(1.5f);
 
-        if (currentLives > 0)
+        if (currentLives <= 0)
         {
+            TriggerGameOver();
+        } else 
+        {
+            yield return new WaitForSeconds(1.5f);
+
             audioManager.StopSFX();
 
             currentGridPos = new Vector3Int(-10, 6, 0);
@@ -449,8 +461,13 @@ public class PacStudentController : MonoBehaviour
             return;
         }
 
+        if (AllPalletsEaten())
+        {
+            TriggerGameOver();
+        }
+
         TileBase pelletTile = palletTileMap.GetTile(currentGridPos);
-        TileBase powerTile = powerPelletTile.GetTile(currentGridPos);
+        TileBase powerTile = powerPalletTile.GetTile(currentGridPos);
 
         if (pelletTile != null)
         {
@@ -460,11 +477,56 @@ public class PacStudentController : MonoBehaviour
         }
         else if (powerTile != null)
         {
-            powerPelletTile.SetTile(currentGridPos, null);
+            powerPalletTile.SetTile(currentGridPos, null);
             InGameUI.Instance.AddScore(50);
             audioManager.PlayMusic(audioManager.ghostMode, true);
             GhostStateManager.SetAllGhostsScared();
             InGameUI.Instance.StartGhostTimer(10f);
         }
+    }
+
+    public void FreezeMovement()
+    {
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        isMoving = false;
+        isMovingSoundPlaying = false;
+        canMove = false;
+
+        if (audioManager != null)
+        {
+            audioManager.StopSFX();
+        }
+
+        if (animator != null)
+        {
+            animator.speed = 0f;
+        }
+    }
+
+    public void UnFreezeMovement()
+    {
+        canMove = true;
+        if (animator != null)
+        {
+            animator.speed = 1f;
+        }
+    }
+    private bool AllPalletsEaten()
+    {
+        int regularPallets = palletTileMap.GetUsedTilesCount();
+        int powerPallets = powerPalletTile.GetUsedTilesCount();
+        return regularPallets == 0 && powerPallets == 0;
+    }
+
+    private void TriggerGameOver()
+    {
+        globallyFrozen = true;
+        FreezeMovement();
+        
+        InGameUI.Instance.GameOver();
     }
 }

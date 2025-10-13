@@ -7,7 +7,9 @@ public class GhostStateManager : MonoBehaviour
 
     public enum GhostState { 
         Normal,
-        Scared
+        Scared,
+        Recovering,
+        Dead
     }
 
     public GhostState currentState = GhostState.Normal;
@@ -15,6 +17,8 @@ public class GhostStateManager : MonoBehaviour
     public static List<GhostStateManager> allGhosts = new List<GhostStateManager>();
 
     private Animator animator;
+    private Collider2D col;
+    
 
     void Awake()
     {
@@ -25,13 +29,8 @@ public class GhostStateManager : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        col = GetComponent<Collider2D>();
         SetState(GhostState.Normal);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void SetState(GhostState newState)
@@ -46,6 +45,12 @@ public class GhostStateManager : MonoBehaviour
             case GhostState.Scared:
                 PlayScaredAnimation();
                 break;
+            case GhostState.Recovering:
+                PlayRecoveringAnimation();
+                break;
+            case GhostState.Dead:
+                PlayDeadAnimation();
+                break;
         }
     }
 
@@ -59,6 +64,16 @@ public class GhostStateManager : MonoBehaviour
     {
         string animName = "SChicken_Right";
         animator.Play(animName);
+    }
+
+    private void PlayRecoveringAnimation()
+    {
+        animator.Play("RecoveringAnimation_Right");
+    }
+
+    private void PlayDeadAnimation()
+    {
+        animator.Play("DeadChicken_anim");
     }
 
     public static void SetAllGhostsNormal()
@@ -76,4 +91,45 @@ public class GhostStateManager : MonoBehaviour
             ghost.SetState(GhostState.Scared);
         }
     }
-}
+
+    public void SetDead()
+    {
+        if (currentState == GhostState.Dead)
+        {
+            return;
+        }
+        StartCoroutine(HandleGhostDeath());
+    }
+
+    private IEnumerator HandleGhostDeath()
+    {
+        SetState(GhostState.Dead);
+
+        if (col != null)
+        {
+            col.enabled = false;
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        yield return new WaitForSeconds(3f);
+
+        float remainingScaredTime = InGameUI.Instance.GetRemainingGhostTimer();
+
+        if(remainingScaredTime <= 0)
+        {
+            SetState(GhostState.Normal);
+        } else if (remainingScaredTime <= 3f)
+        {
+            SetState(GhostState.Recovering);
+        } else
+        {
+            SetState(GhostState.Scared);
+        }
+
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+    }
+}   
