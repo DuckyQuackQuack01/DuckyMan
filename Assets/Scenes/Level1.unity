@@ -7224,8 +7224,8 @@ MonoBehaviour:
   wallTilemap: {fileID: 1071330151}
   ghostWallTilemap: {fileID: 1818236888}
   teleporterTileMap: {fileID: 1751615903}
-  ghostExitWallTilemap: {fileID: 1818236888}
   pacStudent: {fileID: 1612825672}
+  GhostID: 1
 --- !u!1 &998144465
 GameObject:
   m_ObjectHideFlags: 0
@@ -27311,6 +27311,7 @@ GameObject:
   - component: {fileID: 1683148446}
   - component: {fileID: 1683148447}
   - component: {fileID: 1683148448}
+  - component: {fileID: 1683148449}
   m_Layer: 0
   m_Name: Ghost3
   m_TagString: Ghost
@@ -27470,6 +27471,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.29832315, y: 0.29817116}
   m_EdgeRadius: 0
+--- !u!114 &1683148449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683148443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84735a793ad04924fa507ac176fa8ed5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  wallTilemap: {fileID: 1071330151}
+  ghostWallTilemap: {fileID: 1818236888}
+  teleporterTileMap: {fileID: 1751615903}
+  pacStudent: {fileID: 1612825672}
+  GhostID: 3
 --- !u!1 &1751615900
 GameObject:
   m_ObjectHideFlags: 0
@@ -28109,6 +28128,7 @@ GameObject:
   - component: {fileID: 1883393076}
   - component: {fileID: 1883393077}
   - component: {fileID: 1883393078}
+  - component: {fileID: 1883393079}
   m_Layer: 0
   m_Name: Ghost4
   m_TagString: Ghost
@@ -28268,6 +28288,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.29961872, y: 0.2983736}
   m_EdgeRadius: 0
+--- !u!114 &1883393079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1883393073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84735a793ad04924fa507ac176fa8ed5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  wallTilemap: {fileID: 1071330151}
+  ghostWallTilemap: {fileID: 1818236888}
+  teleporterTileMap: {fileID: 1751615903}
+  pacStudent: {fileID: 1612825672}
+  GhostID: 4
 --- !u!1 &1885573148
 GameObject:
   m_ObjectHideFlags: 0
@@ -30869,6 +30907,7 @@ GameObject:
   - component: {fileID: 2052240905}
   - component: {fileID: 2052240906}
   - component: {fileID: 2052240907}
+  - component: {fileID: 2052240908}
   m_Layer: 0
   m_Name: Ghost2
   m_TagString: Ghost
@@ -31028,6 +31067,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.29957628, y: 0.2974348}
   m_EdgeRadius: 0
+--- !u!114 &2052240908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052240902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84735a793ad04924fa507ac176fa8ed5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  wallTilemap: {fileID: 1071330151}
+  ghostWallTilemap: {fileID: 1818236888}
+  teleporterTileMap: {fileID: 1751615903}
+  pacStudent: {fileID: 1612825672}
+  GhostID: 2
 --- !u!1 &2084351691
 GameObject:
   m_ObjectHideFlags: 0
