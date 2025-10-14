@@ -14,6 +14,11 @@ public class GhostController : MonoBehaviour
     public Transform pacStudent;
     public int GhostID;
 
+    public float normalSpeedMultiplier = 0.9f;
+    public float scaredSpeedMultiplier = 0.5f;
+
+    private float baseSpeed;
+
     private Vector3Int currentGridPos;
     private Vector3Int previousGridPos;
     private Coroutine moveCoroutine;
@@ -36,7 +41,9 @@ public class GhostController : MonoBehaviour
 
     void Start()
     {
-        switch (GhostID) 
+        baseSpeed = moveSpeed;
+        
+        switch (GhostID)
         {
             case 1:
                 currentGridPos = new Vector3Int(2, -6, 0);
@@ -53,7 +60,6 @@ public class GhostController : MonoBehaviour
         }
 
         transform.position = GridToWorld(currentGridPos);
-
         StartCoroutine(AutoMove());
 
         animator = GetComponent<Animator>();
@@ -232,7 +238,18 @@ public class GhostController : MonoBehaviour
         float currentDist = Vector2.Distance(GridToWorld(currentGridPos), pacStudent.position);
         List<Vector3Int> filteredMoves = new List<Vector3Int>();
 
-        if (GhostID == 1)
+
+        if (stateManager.currentState == GhostStateManager.GhostState.Scared ||stateManager.currentState == GhostStateManager.GhostState.Recovering)
+        {
+            foreach (var move in validMoves)
+            {
+                float newDist = Vector2.Distance(GridToWorld(move), pacStudent.position);
+                if (newDist > currentDist)
+                {
+                    filteredMoves.Add(move);
+                }
+            }
+        } else if (GhostID == 1)
         {
             foreach (var move in validMoves)
             {
@@ -310,7 +327,7 @@ public class GhostController : MonoBehaviour
         }
 
         Vector3Int diff = targetExit - currentGridPos;
-        if(Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
         {
             return currentGridPos + new Vector3Int(Mathf.Sign(diff.x) > 0 ? 1 : -1, 0, 0);
         } else if (Mathf.Abs(diff.y) > 0)
@@ -383,7 +400,7 @@ public class GhostController : MonoBehaviour
     {
         canMove = false;
         isFrozen = true;
-        
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
@@ -405,4 +422,19 @@ public class GhostController : MonoBehaviour
         new Vector3Int(15, 6, 0),
         new Vector3Int(-10, 6, 0),
     };
+
+    public void UpdateSpeedBasedOnState(GhostStateManager.GhostState state)
+    {
+        switch (state)
+        {
+            case GhostStateManager.GhostState.Normal:
+                moveSpeed =  baseSpeed * normalSpeedMultiplier;
+                break;
+            case GhostStateManager.GhostState.Scared:
+            case GhostStateManager.GhostState.Recovering:
+            case GhostStateManager.GhostState.Dead:
+                moveSpeed = baseSpeed * normalSpeedMultiplier * scaredSpeedMultiplier;
+                break;
+        }
+    }
 }

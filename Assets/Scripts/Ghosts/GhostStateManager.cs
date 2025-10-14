@@ -38,6 +38,8 @@ public class GhostStateManager : MonoBehaviour
     {
         currentState = newState;
 
+        GetComponent<GhostController>()?.UpdateSpeedBasedOnState(newState);
+
         switch (currentState)
         {
             case GhostState.Normal:
