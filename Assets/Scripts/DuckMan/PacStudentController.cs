@@ -67,6 +67,8 @@ public class PacStudentController : MonoBehaviour
             {
                 audioManager.PlayMusic(audioManager.background, true);
                 UnFreezeMovement();
+
+                GhostStateManager.UnfreezeAllGhosts();
             }
             else
             {
@@ -407,6 +409,8 @@ public class PacStudentController : MonoBehaviour
 
         isDead = true;
 
+        GhostStateManager.FreezeAllGhosts();
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
@@ -437,6 +441,7 @@ public class PacStudentController : MonoBehaviour
             audioManager.StopSFX();
 
             currentGridPos = new Vector3Int(-10, 6, 0);
+            GhostStateManager.ResetAllGhostsToSpawn();
             transform.position = GridToWorld(currentGridPos);
 
             CheckPelletAtCurrentPosition();

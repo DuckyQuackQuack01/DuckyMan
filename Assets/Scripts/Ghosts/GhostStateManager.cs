@@ -168,4 +168,40 @@ public class GhostStateManager : MonoBehaviour
                 break;
         }
     }
+
+    public static void FreezeAllGhosts()
+    {
+        foreach (var ghost in allGhosts)
+        {
+            var controller = ghost.GetComponent<GhostController>();
+            if (controller != null)
+            {
+                controller.Freeze();
+            }
+        }
+    }
+
+    public static void UnfreezeAllGhosts()
+    {
+        foreach (var ghost in allGhosts)
+        {
+            var controller = ghost.GetComponent<GhostController>();
+            if (controller != null)
+            {
+                controller.UnFreeze();
+            }
+        }
+    }
+
+    public static void ResetAllGhostsToSpawn()
+    {
+        foreach (var ghost in allGhosts)
+        {
+            var controller = ghost.GetComponent<GhostController>();
+            if (controller != null)
+            {
+                controller.ResetToSpawn();
+            }
+        }
+    }
 }   
