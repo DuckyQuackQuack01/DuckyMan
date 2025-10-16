@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -37,13 +37,19 @@ public class GhostController : MonoBehaviour
     private float baseSpeed;
     private PacStudentController pacStudentController;
 
+    private bool isReturningToSpawn = false;
+    private Vector3 spawnWorldPosition;
+
     void Start()
     {
         pacStudentController = pacStudent.GetComponent<PacStudentController>();
-        baseSpeed = pacStudentController.moveSpeed * 0.9f;
+        baseSpeed = pacStudentController.moveSpeed * 0.9f; 
         moveSpeed = baseSpeed;
 
-        switch (GhostID) 
+        transform.position = GridToWorld(currentGridPos);
+        spawnWorldPosition = GridToWorld(new Vector3Int(2, -7, 0));
+
+        switch (GhostID)
         {
             case 1:
                 currentGridPos = new Vector3Int(2, -6, 0);
@@ -82,7 +88,7 @@ public class GhostController : MonoBehaviour
 
         while (true)
         {
-            if (isFrozen)
+            if (isFrozen || isReturningToSpawn)
             {
                 yield return null;
                 continue;
@@ -113,6 +119,11 @@ public class GhostController : MonoBehaviour
         float distance = Vector2.Distance(start, target);
         float duration = distance / moveSpeed;
         float elapsed = 0f;
+
+        if (stateManager.currentState == GhostStateManager.GhostState.Dead)
+        {
+            yield break;
+        }
 
         while (elapsed < duration)
         {
@@ -243,7 +254,7 @@ public class GhostController : MonoBehaviour
             {
                 continue;
             }
-    
+
 
             if (IsWalkable(candidate))
             {
@@ -312,11 +323,12 @@ public class GhostController : MonoBehaviour
             if (Mathf.Abs(target.x - currentGridPos.x) > Mathf.Abs(target.y - currentGridPos.y))
             {
                 dir = (target.x > currentGridPos.x) ? Vector3Int.right : Vector3Int.left;
-            } else
+            }
+            else
             {
                 dir = (target.y > currentGridPos.y) ? Vector3Int.up : Vector3Int.down;
             }
-        
+
             Vector3Int next = currentGridPos + dir;
             if (IsWalkable(next))
                 return next;
@@ -335,16 +347,18 @@ public class GhostController : MonoBehaviour
         if (GhostID == 1 || GhostID == 3)
         {
             targetExit = new Vector3Int(2, -4, 0);
-        } else
+        }
+        else
         {
             targetExit = new Vector3Int(2, -10, 0);
         }
 
         Vector3Int diff = targetExit - currentGridPos;
-        if(Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
         {
             return currentGridPos + new Vector3Int(Mathf.Sign(diff.x) > 0 ? 1 : -1, 0, 0);
-        } else if (Mathf.Abs(diff.y) > 0)
+        }
+        else if (Mathf.Abs(diff.y) > 0)
         {
             return currentGridPos + new Vector3Int(0, Mathf.Sign(diff.y) > 0 ? 1 : -1, 0);
         }
@@ -355,6 +369,12 @@ public class GhostController : MonoBehaviour
     private bool IsWalkable(Vector3Int gridPos)
     {
         gridPos.z = 0;
+
+        bool isDead = stateManager.currentState == GhostStateManager.GhostState.Dead;
+        if (isDead)
+        {
+            return true;
+        }
 
         if (wallTilemap.HasTile(gridPos))
         {
@@ -372,8 +392,6 @@ public class GhostController : MonoBehaviour
         }
 
         bool isExitTile = ghostWallTilemap.HasTile(gridPos);
-        bool isDead = stateManager.currentState == GhostStateManager.GhostState.Dead;
-
 
         if (ghostWallTilemap.HasTile(gridPos))
         {
@@ -414,7 +432,7 @@ public class GhostController : MonoBehaviour
     {
         canMove = false;
         isFrozen = true;
-        
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
@@ -441,28 +459,38 @@ public class GhostController : MonoBehaviour
     {
         if (stateManager == null || pacStudentController == null) return;
 
-        float normalGhostSpeed = pacStudentController.moveSpeed * 0.9f;
+        float pacSpeed = pacStudentController.moveSpeed;
+        float normalSpeed = pacSpeed * 0.9f;
+        float scaredSpeed = normalSpeed * 0.5f;
 
         switch (stateManager.currentState)
         {
             case GhostStateManager.GhostState.Normal:
-                moveSpeed = normalGhostSpeed;
+                moveSpeed = normalSpeed;
                 break;
 
             case GhostStateManager.GhostState.Scared:
             case GhostStateManager.GhostState.Recovering:
+                moveSpeed = scaredSpeed;
+                break;
+
             case GhostStateManager.GhostState.Dead:
-                moveSpeed = normalGhostSpeed * 0.5f;
+                moveSpeed = normalSpeed;
+
+                if (!isReturningToSpawn)
+                {
+                    if (moveCoroutine != null)
+                        StopCoroutine(moveCoroutine);
+
+                    moveCoroutine = StartCoroutine(MoveToSpawnWhenDead());
+                }
                 break;
         }
     }
 
     public void ResetToSpawn()
     {
-        if (moveCoroutine != null)
-        {
-            StopCoroutine(moveCoroutine);
-        }
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
 
         isMoving = false;
         isFrozen = true;
@@ -475,22 +503,47 @@ public class GhostController : MonoBehaviour
 
         switch (GhostID)
         {
-            case 1:
-                currentGridPos = new Vector3Int(2, -6, 0);
-                break;
-            case 2:
-                currentGridPos = new Vector3Int(2, -8, 0);
-                break;
-            case 3:
-                currentGridPos = new Vector3Int(3, -6, 0);
-                break;
-            case 4:
-                currentGridPos = new Vector3Int(3, -8, 0);
-                break;
+            case 1: currentGridPos = new Vector3Int(2, -6, 0); break;
+            case 2: currentGridPos = new Vector3Int(2, -8, 0); break;
+            case 3: currentGridPos = new Vector3Int(3, -6, 0); break;
+            case 4: currentGridPos = new Vector3Int(3, -8, 0); break;
         }
 
         transform.position = GridToWorld(currentGridPos);
 
         GhostStateManager.SetAllGhostsNormal();
+        EnableMovement();
+    }
+
+    private IEnumerator MoveToSpawnWhenDead()
+    {
+        isReturningToSpawn = true;
+
+        float pacSpeed = pacStudentController.moveSpeed;
+        float normalSpeed = pacSpeed * 0.9f;
+        moveSpeed = normalSpeed;
+
+        while (Vector3.Distance(transform.position, spawnWorldPosition) > 0.05f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                spawnWorldPosition,
+                moveSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
+
+        transform.position = spawnWorldPosition;
+        currentGridPos = wallTilemap.WorldToCell(spawnWorldPosition);
+        previousGridPos = currentGridPos;
+
+        isReturningToSpawn = false;
+        isMoving = false;
+        canMove = true;
+        isFrozen = false;
+
+        stateManager.SetState(GhostStateManager.GhostState.Normal);
+        isInsideGhostHouse = true;
+        isExitingHouse = true;
     }
 }
