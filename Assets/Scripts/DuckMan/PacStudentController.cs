@@ -390,7 +390,7 @@ public class PacStudentController : MonoBehaviour
             {
                 StartCoroutine(HandleDeath());
             }
-            else if (ghost.currentState == GhostStateManager.GhostState.Scared)
+            else if (ghost.currentState == GhostStateManager.GhostState.Scared || ghost.currentState == GhostStateManager.GhostState.Recovering)
             {
                 ghost.SetDead();
                 InGameUI.Instance.AddScore(300);
@@ -442,6 +442,7 @@ public class PacStudentController : MonoBehaviour
 
             currentGridPos = new Vector3Int(-10, 6, 0);
             GhostStateManager.ResetAllGhostsToSpawn();
+            GhostStateManager.FreezeAllGhosts();
             transform.position = GridToWorld(currentGridPos);
 
             CheckPelletAtCurrentPosition();

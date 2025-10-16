@@ -20,6 +20,8 @@ public class GhostStateManager : MonoBehaviour
     private Collider2D col;
 
     private string currentDirection = "Right";
+    private Coroutine flashCoroutine;
+    private bool isFlashing = false;
 
     void Awake()
     {
@@ -36,6 +38,10 @@ public class GhostStateManager : MonoBehaviour
 
     public void SetState(GhostState newState)
     {
+        var controller = GetComponent<GhostController>();
+        if (controller != null && controller.isReturningToSpawn && newState != GhostState.Dead)
+            return;
+
         currentState = newState;
 
         switch (currentState)
@@ -108,31 +114,17 @@ public class GhostStateManager : MonoBehaviour
         SetState(GhostState.Dead);
 
         if (col != null)
-        {
             col.enabled = false;
-        }
 
-        yield return new WaitForSeconds(1.5f);
-
-        yield return new WaitForSeconds(3f);
-
-        float remainingScaredTime = InGameUI.Instance.GetRemainingGhostTimer();
-
-        if (remainingScaredTime <= 0)
+        var controller = GetComponent<GhostController>();
+        if (controller != null)
         {
-            SetState(GhostState.Normal);
-        } else if (remainingScaredTime <= 3f)
-        {
-            SetState(GhostState.Recovering);
-        } else
-        {
-            SetState(GhostState.Scared);
         }
 
         if (col != null)
-        {
             col.enabled = true;
-        }
+
+        yield break;
     }
 
     public void UpdateDirection(Vector3Int dir)
@@ -202,6 +194,66 @@ public class GhostStateManager : MonoBehaviour
             {
                 controller.ResetToSpawn();
             }
+        }
+    }
+
+    public void StartFlashing(float duration)
+    {
+        if (isFlashing)
+        {
+            return;
+        }
+        
+        isFlashing = true;
+        flashCoroutine = StartCoroutine(FlashRoutine(duration));
+    }
+
+    private IEnumerator FlashRoutine(float duration)
+    {
+        float interval = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (!IsDeadOrReturning)
+            {
+                if (currentState == GhostState.Scared)
+                    SetState(GhostState.Recovering);
+                else if (currentState == GhostState.Recovering)
+                    SetState(GhostState.Scared);
+            }
+
+            yield return new WaitForSeconds(interval);
+            elapsed += interval;
+        }
+
+        if (!IsDeadOrReturning)
+        {
+            if (InGameUI.Instance.GetRemainingGhostTimer() <= 0f)
+                SetState(GhostState.Normal);
+            else
+                SetState(GhostState.Scared);
+        }
+
+        isFlashing = false;
+        flashCoroutine = null;
+    }
+
+    public static void SetAllNonDeadGhostsNormal()
+    {
+        foreach (var ghost in allGhosts)
+        {
+            if (ghost.currentState != GhostState.Dead)
+                ghost.SetState(GhostState.Normal);
+        }
+    }
+
+    public bool IsDeadOrReturning
+    {
+        get
+        {
+            var controller = GetComponent<GhostController>();
+            return currentState == GhostState.Dead && controller != null && controller.isReturningToSpawn;
         }
     }
 }   

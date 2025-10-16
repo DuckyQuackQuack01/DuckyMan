@@ -97,8 +97,9 @@ public class InGameUI : MonoBehaviour
         scareTimerDisplay.gameObject.SetActive(true);
 
         float remaining = duration;
+        remainingScaredTime = remaining;
 
-        while(remaining > 0)
+        while (remaining > 0)
         {
             int minutes = Mathf.FloorToInt(remaining / 60);
             int seconds = Mathf.FloorToInt(remaining % 60);
@@ -109,13 +110,25 @@ public class InGameUI : MonoBehaviour
 
             yield return null;
             remaining -= Time.deltaTime;
+            remainingScaredTime = remaining;
+
+            if (remaining <= 3f && remaining > 0f)
+            {
+                foreach (var ghost in GhostStateManager.allGhosts)
+                {
+                    if (ghost.currentState == GhostStateManager.GhostState.Scared)
+                    {
+                        ghost.StartFlashing(remaining);
+                    }
+                }
+            }
         }
 
         scaredTimerTitle.gameObject.SetActive(false);
         scareTimerDisplay.gameObject.SetActive(false);
         audioManager.PlayMusic(audioManager.background, true);
-        scareTimerDisplay.text = "00:00:00";
         remainingScaredTime = 0f;
+
         GhostStateManager.SetAllGhostsNormal();
     }
 
