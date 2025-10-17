@@ -143,6 +143,8 @@ public class InGameUI : MonoBehaviour
         
         pacStudent.FreezeMovement();
 
+        audioManager.PlayMusic(audioManager.startMusic, true);
+
         overlayImage.gameObject.SetActive(true);
         screenText.gameObject.SetActive(true);
 
@@ -160,6 +162,8 @@ public class InGameUI : MonoBehaviour
 
         overlayImage.gameObject.SetActive(false);
         screenText.gameObject.SetActive(false);
+
+        audioManager.PlayMusic(audioManager.background, true);
 
         PacStudentController.globallyFrozen = false;
         pacStudent.UnFreezeMovement();
@@ -200,6 +204,7 @@ public class InGameUI : MonoBehaviour
 
     public void GameOver()
     {
+        pacStudent.SetGameOverFrozen(true);
         gameTimerRunning = false;
         PacStudentController.globallyFrozen = true;
         pacStudent.FreezeMovement();

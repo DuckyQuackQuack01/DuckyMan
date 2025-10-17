@@ -22,24 +22,6 @@ public class AudioManager : MonoBehaviour
 
     public bool gameStarted = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        StartCoroutine(PlayIntroThenBackground());
-    }
-
-    IEnumerator PlayIntroThenBackground()
-    {
-        musicSource.PlayOneShot(startMusic);
-
-        yield return new WaitForSeconds(startMusic.length);
-
-        gameStarted = true;
-        musicSource.clip = background;
-        musicSource.loop = true;
-        musicSource.Play();
-    }
-
     public void PlayMusic(AudioClip clip, bool loop = true)
     {
         if (musicSource.clip == clip && musicSource.isPlaying)
@@ -83,4 +65,12 @@ public class AudioManager : MonoBehaviour
             musicSource.Stop();
         }
     }
+    public void PlaySFXOverride(AudioClip clip, bool loop = false)
+    {
+        SFXSource.Stop();
+        SFXSource.clip = clip;
+        SFXSource.loop = loop;
+        SFXSource.Play();
+    }   
+
 }

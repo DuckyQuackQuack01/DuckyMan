@@ -578,6 +578,7 @@ public class GhostController : MonoBehaviour
         }
 
         EnableMovement();
+        moveToSpawnStarted = false;
     }
 
     public IEnumerator MoveToSpawnWhenDead()
@@ -622,5 +623,6 @@ public class GhostController : MonoBehaviour
 
         EnableMovement();
         StartCoroutine(AutoMove());
+        moveToSpawnStarted = false;
     }
 }

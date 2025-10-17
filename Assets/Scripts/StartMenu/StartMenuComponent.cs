@@ -21,7 +21,12 @@ public class StartMenuComponent : MonoBehaviour
 
     public void OnExitClick()
     {
-        Application.Quit();
+#if UNITY_EDITOR
+        // Stop play mode in the Unity Editor
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
     }
 
     private void LoadHighScore()
