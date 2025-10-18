@@ -32,6 +32,11 @@ public class PacStudentController : MonoBehaviour
     private bool isDead = false;
     private bool canMove = true;
     private bool gameOverFrozen = false;
+    private bool isEating = false;
+    private bool playedWallHitSound = false;
+
+    private float eatSoundCooldown = 0.2f;
+    private float eatSoundTimer = 0f;
 
     private Vector3 startPosition;
     private int currentLives = 3;
@@ -107,6 +112,8 @@ public class PacStudentController : MonoBehaviour
         {
             PlayMovementEffects();
         }
+
+        HandleAudio();
     }
 
     private void TryMove()
@@ -162,14 +169,13 @@ public class PacStudentController : MonoBehaviour
         }
 
         isMoving = true;
-
         PlayAnimation(currentInput);
 
-        if (!isMovingSoundPlaying)
-        {
-            audioManager.PlaySFX(audioManager.duckWalk, true);
-            isMovingSoundPlaying = true;
-        }
+        //if (!isMovingSoundPlaying)
+        //{
+        //    audioManager.PlaySFX(audioManager.duckWalk, true);
+        //    isMovingSoundPlaying = true;
+        //}
 
         Vector2 start = GridToWorld(currentGridPos);
         Vector2 target = GridToWorld(nextGrid);
@@ -213,12 +219,13 @@ public class PacStudentController : MonoBehaviour
 
         if (!isDead && !palletTileMap.HasTile(currentGridPos) && !powerPalletTile.HasTile(currentGridPos))
         {
-            if (!isMovingSoundPlaying)
-            {
-                audioManager.StopSFX();
-                audioManager.PlaySFX(audioManager.duckWalk, true);
-                isMovingSoundPlaying = true;
-            }
+            //if (!isMovingSoundPlaying)
+            //{
+    
+            //    audioManager.PlaySFX(audioManager.duckWalk, true);
+            //    isMovingSoundPlaying = true;
+            //}
+            
         }
 
         CheckPelletAtCurrentPosition();
@@ -229,12 +236,13 @@ public class PacStudentController : MonoBehaviour
         if (dust.isPlaying)
             dust.Stop();
 
-        if (isMovingSoundPlaying)
-        {
-            audioManager.StopSFX();
-            audioManager.PlaySFX(audioManager.duckHitWall, false);
-            isMovingSoundPlaying = false;
-        }
+        isEating = false;
+        //if (isMovingSoundPlaying)
+        //{
+
+        //    audioManager.PlaySFX(audioManager.duckHitWall, false);
+        //    isMovingSoundPlaying = false;
+        //}
     }
 
     private void PlayMovementEffects()
@@ -242,12 +250,11 @@ public class PacStudentController : MonoBehaviour
         if (!dust.isPlaying)
             dust.Play();
 
-        if (!isMovingSoundPlaying)
-        {
-            audioManager.StopSFX();
-            audioManager.PlaySFX(audioManager.duckWalk, true);
-            isMovingSoundPlaying = true;
-        }
+        //if (!isMovingSoundPlaying)
+        //{
+        //    audioManager.PlaySFX(audioManager.duckWalk, true);
+        //    isMovingSoundPlaying = true;
+        //}
     }
 
     private Vector3Int DirFromInput(string input)
@@ -314,6 +321,10 @@ public class PacStudentController : MonoBehaviour
 
     private void WallCollision(Vector3Int wallPos)
     {
+        isMoving = false;
+        isEating = false;
+        playedWallHitSound = false;
+
         Vector3 worldPos = GridToWorld(wallPos);
 
         wallBump.transform.position = worldPos;
@@ -344,17 +355,15 @@ public class PacStudentController : MonoBehaviour
         wallBump.Play();
 
         PlayWallHitSound();
-
         transform.position = GridToWorld(currentGridPos);
     }
 
     private void PlayWallHitSound()
     {
-        if (!isMovingSoundPlaying)
+        if (!playedWallHitSound)
         {
-            audioManager.StopSFX();
             audioManager.PlaySFX(audioManager.duckHitWall, false);
-            isMovingSoundPlaying = true;
+            playedWallHitSound = true;
         }
     }
 
@@ -385,30 +394,36 @@ public class PacStudentController : MonoBehaviour
         if (collision.CompareTag("Cherry"))
         {
             Destroy(collision.gameObject);
-
             InGameUI.Instance.AddScore(100);
 
+            isEating = true;
+            eatSoundTimer = eatSoundCooldown;
             audioManager.PlaySFX(audioManager.duckEat, false);
         }
 
         if (collision.CompareTag("Ghost"))
         {
-
             GhostStateManager ghost = collision.GetComponent<GhostStateManager>();
+
             if (ghost.currentState == GhostStateManager.GhostState.Normal && !isDead)
             {
                 StartCoroutine(HandleDeath());
             }
-            else if (ghost.currentState == GhostStateManager.GhostState.Scared || ghost.currentState == GhostStateManager.GhostState.Recovering)
+            else if (ghost.currentState == GhostStateManager.GhostState.Scared ||
+                     ghost.currentState == GhostStateManager.GhostState.Recovering)
             {
                 ghost.SetDead();
                 InGameUI.Instance.AddScore(300);
+
+                isEating = true;
+                eatSoundTimer = eatSoundCooldown;
                 audioManager.PlaySFX(audioManager.duckEat, false);
+
                 audioManager.PlayMusic(audioManager.deathMode, true);
             }
         }
     }
-    
+
     private IEnumerator HandleDeath()
     {
         if (isDead)
@@ -427,7 +442,7 @@ public class PacStudentController : MonoBehaviour
 
         isMoving = false;
         isMovingSoundPlaying = false;
-        audioManager.StopSFX();
+        //audioManager.StopSFX();
 
         animator.speed = 1f;
         animator.Play("DuckDead_anim");
@@ -447,7 +462,7 @@ public class PacStudentController : MonoBehaviour
         {
             yield return new WaitForSeconds(1.5f);
 
-            audioManager.StopSFX();
+
 
             currentGridPos = new Vector3Int(-10, 6, 0);
             GhostStateManager.ResetAllGhostsToSpawn();
@@ -488,7 +503,9 @@ public class PacStudentController : MonoBehaviour
             palletTileMap.SetTile(currentGridPos, null);
             InGameUI.Instance.AddScore(10);
 
-            audioManager.StopSFX();
+            isEating = true;
+
+            eatSoundTimer = eatSoundCooldown;
             audioManager.PlaySFX(audioManager.duckEat, false);
         }
         else if (powerTile != null)
@@ -496,7 +513,9 @@ public class PacStudentController : MonoBehaviour
             powerPalletTile.SetTile(currentGridPos, null);
             InGameUI.Instance.AddScore(50);
 
-            audioManager.StopSFX();
+            isEating = true;
+
+            eatSoundTimer = eatSoundCooldown;
             audioManager.PlaySFX(audioManager.duckEat, false);
 
             audioManager.PlayMusic(audioManager.ghostMode, true);
@@ -505,12 +524,7 @@ public class PacStudentController : MonoBehaviour
         }
         else
         {
-            if (!isMovingSoundPlaying)
-            {
-                audioManager.StopSFX();
-                audioManager.PlaySFX(audioManager.duckWalk, true);
-                isMovingSoundPlaying = true;
-            }
+            isEating = false;
         }
     }
 
@@ -527,7 +541,7 @@ public class PacStudentController : MonoBehaviour
 
         if (audioManager != null)
         {
-            audioManager.StopSFX();
+
         }
 
         if (animator != null)
@@ -571,7 +585,31 @@ public class PacStudentController : MonoBehaviour
             isMoving = false;
             isMovingSoundPlaying = false;
             canMove = false;
-            audioManager.StopSFX();
+
+        }
+    }
+
+    private void HandleAudio()
+    {
+        if (isDead || globallyFrozen || gameOverFrozen)
+        {
+            if (audioManager.SFXSource.isPlaying)
+                audioManager.SFXSource.Stop();
+            return;
+        }
+
+        if (isEating)
+        {
+            return;
+        }
+
+        if (isMoving)
+        {
+            if (audioManager.SFXSource.clip != audioManager.duckWalk || !audioManager.SFXSource.isPlaying)
+            {
+                audioManager.PlaySFX(audioManager.duckWalk, false);
+            }
+            return;
         }
     }
 }

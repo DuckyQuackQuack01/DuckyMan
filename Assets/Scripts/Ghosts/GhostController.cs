@@ -197,29 +197,39 @@ public class GhostController : MonoBehaviour
 
         if (currentGridPos == leftTeleporterEdge || currentGridPos == rightTeleporterEdge)
         {
-            Vector3Int reverseDir = -lastDirection;
-            Vector3Int reverseTile = currentGridPos + reverseDir;
-
-            if (IsWalkable(reverseTile) || GhostID == 2)
+            if (stateManager.currentState == GhostStateManager.GhostState.Normal ||
+                stateManager.currentState == GhostStateManager.GhostState.Scared ||
+                stateManager.currentState == GhostStateManager.GhostState.Recovering)
             {
-                stateManager?.UpdateDirection(reverseDir);
-                lastDirection = reverseDir;
+                // Force ghost to reverse direction
+                Vector3Int reverseDir = -lastDirection;
+                Vector3Int reverseTile = currentGridPos + reverseDir;
 
-                yield return new WaitForSeconds(0.05f);
+                if (IsWalkable(reverseTile))
+                {
+                    stateManager?.UpdateDirection(reverseDir);
+                    lastDirection = reverseDir;
 
-                if (moveCoroutine != null)
-                    StopCoroutine(moveCoroutine);
+                    yield return new WaitForSeconds(0.05f);
 
-                moveCoroutine = StartCoroutine(MoveTo(reverseTile));
-                yield break;
+                    if (moveCoroutine != null)
+                        StopCoroutine(moveCoroutine);
+
+                    moveCoroutine = StartCoroutine(MoveTo(reverseTile));
+                    yield break;
+                }
             }
             else
             {
-                Vector3Int nextPos = ChooseNextTile();
-                if (nextPos != currentGridPos)
+                if (stateManager.currentState == GhostStateManager.GhostState.Dead)
                 {
-                    moveCoroutine = StartCoroutine(MoveTo(nextPos));
-                    yield break;
+                    Vector3 teleTarget = (currentGridPos == leftTeleporterEdge)
+                        ? GridToWorld(rightTeleporterEdge + Vector3Int.right)
+                        : GridToWorld(leftTeleporterEdge + Vector3Int.left);
+
+                    transform.position = teleTarget;
+                    currentGridPos = wallTilemap.WorldToCell(teleTarget);
+                    previousGridPos = currentGridPos;
                 }
             }
         }
@@ -247,8 +257,8 @@ public class GhostController : MonoBehaviour
         isMoving = true;
 
         Vector2 start = GridToWorld(currentGridPos);
-        Vector2 target = GridToWorld(backTile);
-        float distance = Vector2.Distance(start, target);
+        Vector2 backTarget = GridToWorld(backTile);
+        float distance = Vector2.Distance(start, backTarget);
         float duration = distance / moveSpeed;
         float elapsed = 0f;
 
@@ -262,11 +272,11 @@ public class GhostController : MonoBehaviour
 
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            transform.position = Vector2.Lerp(start, target, t);
+            transform.position = Vector2.Lerp(start, backTarget, t);
             yield return null;
         }
 
-        transform.position = target;
+        transform.position = backTarget;
 
         Vector3Int temp = currentGridPos;
         currentGridPos = backTile;

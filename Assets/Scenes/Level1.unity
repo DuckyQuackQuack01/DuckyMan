@@ -595,6 +595,135 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134646209}
   m_CullTransparentMesh: 1
+--- !u!1 &192805675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 192805677}
+  - component: {fileID: 192805676}
+  m_Layer: 0
+  m_Name: SFXOnce
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &192805676
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192805675}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &192805677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192805675}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1531478361}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &196900045
 GameObject:
   m_ObjectHideFlags: 0
@@ -7226,6 +7355,7 @@ MonoBehaviour:
   teleporterTileMap: {fileID: 1751615903}
   pacStudent: {fileID: 1612825672}
   GhostID: 1
+  isReturningToSpawn: 0
 --- !u!1 &998144465
 GameObject:
   m_ObjectHideFlags: 0
@@ -23734,6 +23864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 797705531}
   SFXSource: {fileID: 671687943}
+  SFXOnce: {fileID: 192805676}
   mainMenu: {fileID: 8300000, guid: ba9928409be02b34ca9796be2989c5ae, type: 3}
   startMusic: {fileID: 8300000, guid: 7df633e03f220c14192414dc73df8286, type: 3}
   background: {fileID: 8300000, guid: 247d9e56fd1e68940bedbaf5203fa2ed, type: 3}
@@ -23741,7 +23872,7 @@ MonoBehaviour:
   ghostMode: {fileID: 8300000, guid: 2d75b5fde1c684244847c876f8679dac, type: 3}
   duckWalk: {fileID: 8300000, guid: 9b3a9f6d65bcbfc4c9d933a229d9ad98, type: 3}
   duckDead: {fileID: 8300000, guid: 66d5428020fd3d14eb53ffca1b222553, type: 3}
-  duckEat: {fileID: 8300000, guid: 2d42dea73f447c8469ffbabe7b82d2c5, type: 3}
+  duckEat: {fileID: 8300000, guid: 3f966bff6fcdcbd458e425b64f6f8489, type: 3}
   duckHitWall: {fileID: 8300000, guid: 3f966bff6fcdcbd458e425b64f6f8489, type: 3}
   gameStarted: 0
 --- !u!4 &1531478361
@@ -23759,6 +23890,7 @@ Transform:
   m_Children:
   - {fileID: 797705532}
   - {fileID: 671687944}
+  - {fileID: 192805677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1577200950
@@ -27489,6 +27621,7 @@ MonoBehaviour:
   teleporterTileMap: {fileID: 1751615903}
   pacStudent: {fileID: 1612825672}
   GhostID: 3
+  isReturningToSpawn: 0
 --- !u!1 &1751615900
 GameObject:
   m_ObjectHideFlags: 0
@@ -28306,6 +28439,7 @@ MonoBehaviour:
   teleporterTileMap: {fileID: 1751615903}
   pacStudent: {fileID: 1612825672}
   GhostID: 4
+  isReturningToSpawn: 0
 --- !u!1 &1885573148
 GameObject:
   m_ObjectHideFlags: 0
@@ -31085,6 +31219,7 @@ MonoBehaviour:
   teleporterTileMap: {fileID: 1751615903}
   pacStudent: {fileID: 1612825672}
   GhostID: 2
+  isReturningToSpawn: 0
 --- !u!1 &2084351691
 GameObject:
   m_ObjectHideFlags: 0
