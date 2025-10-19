@@ -23872,7 +23872,7 @@ MonoBehaviour:
   ghostMode: {fileID: 8300000, guid: 2d75b5fde1c684244847c876f8679dac, type: 3}
   duckWalk: {fileID: 8300000, guid: 9b3a9f6d65bcbfc4c9d933a229d9ad98, type: 3}
   duckDead: {fileID: 8300000, guid: 66d5428020fd3d14eb53ffca1b222553, type: 3}
-  duckEat: {fileID: 8300000, guid: 3f966bff6fcdcbd458e425b64f6f8489, type: 3}
+  duckEat: {fileID: 8300000, guid: 2d42dea73f447c8469ffbabe7b82d2c5, type: 3}
   duckHitWall: {fileID: 8300000, guid: 3f966bff6fcdcbd458e425b64f6f8489, type: 3}
   gameStarted: 0
 --- !u!4 &1531478361

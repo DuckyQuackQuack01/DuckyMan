@@ -87,16 +87,19 @@ public class PacStudentController : MonoBehaviour
             lastInput = "W";
             isMovingSoundPlaying = false;
         }
+        
         if (Input.GetKeyDown(KeyCode.A))
         { 
             lastInput = "A";
             isMovingSoundPlaying = false;
         }
+        
         if (Input.GetKeyDown(KeyCode.S))
         {
             lastInput = "S";
             isMovingSoundPlaying = false;
         }
+
         if (Input.GetKeyDown(KeyCode.D))
         {
             lastInput = "D";
@@ -171,12 +174,6 @@ public class PacStudentController : MonoBehaviour
         isMoving = true;
         PlayAnimation(currentInput);
 
-        //if (!isMovingSoundPlaying)
-        //{
-        //    audioManager.PlaySFX(audioManager.duckWalk, true);
-        //    isMovingSoundPlaying = true;
-        //}
-
         Vector2 start = GridToWorld(currentGridPos);
         Vector2 target = GridToWorld(nextGrid);
         float distance = Vector2.Distance(start, target);
@@ -216,45 +213,25 @@ public class PacStudentController : MonoBehaviour
             isMoving = false;
             StopMovementEffects();
         }
-
-        if (!isDead && !palletTileMap.HasTile(currentGridPos) && !powerPalletTile.HasTile(currentGridPos))
-        {
-            //if (!isMovingSoundPlaying)
-            //{
-    
-            //    audioManager.PlaySFX(audioManager.duckWalk, true);
-            //    isMovingSoundPlaying = true;
-            //}
-            
-        }
-
         CheckPelletAtCurrentPosition();
     }
 
     private void StopMovementEffects()
     {
         if (dust.isPlaying)
+        {
             dust.Stop();
+        }
 
         isEating = false;
-        //if (isMovingSoundPlaying)
-        //{
-
-        //    audioManager.PlaySFX(audioManager.duckHitWall, false);
-        //    isMovingSoundPlaying = false;
-        //}
     }
 
     private void PlayMovementEffects()
     {
         if (!dust.isPlaying)
+        {
             dust.Play();
-
-        //if (!isMovingSoundPlaying)
-        //{
-        //    audioManager.PlaySFX(audioManager.duckWalk, true);
-        //    isMovingSoundPlaying = true;
-        //}
+        }
     }
 
     private Vector3Int DirFromInput(string input)
@@ -442,7 +419,6 @@ public class PacStudentController : MonoBehaviour
 
         isMoving = false;
         isMovingSoundPlaying = false;
-        //audioManager.StopSFX();
 
         animator.speed = 1f;
         animator.Play("DuckDead_anim");
@@ -487,7 +463,9 @@ public class PacStudentController : MonoBehaviour
     private void CheckPelletAtCurrentPosition()
     {
         if (isDead)
+        {
             return;
+        }
 
         if (AllPalletsEaten())
         {
@@ -594,7 +572,9 @@ public class PacStudentController : MonoBehaviour
         if (isDead || globallyFrozen || gameOverFrozen)
         {
             if (audioManager.SFXSource.isPlaying)
+            {
                 audioManager.SFXSource.Stop();
+            }
             return;
         }
 

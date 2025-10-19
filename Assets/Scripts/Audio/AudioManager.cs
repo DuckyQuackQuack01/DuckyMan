@@ -46,11 +46,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlayOnceSFX(AudioClip clip)
-    {
-        SFXOnce.PlayOneShot(clip);
-    }
-
     public void StopMusic()
     {
         if (musicSource.isPlaying)
@@ -58,12 +53,4 @@ public class AudioManager : MonoBehaviour
             musicSource.Stop();
         }
     }
-
-    public void PlaySFXOverride(AudioClip clip, bool loop = false)
-    {
-        SFXSource.Stop();
-        SFXSource.clip = clip;
-        SFXSource.loop = loop;
-        SFXSource.Play();
-    }   
 }

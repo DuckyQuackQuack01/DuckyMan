@@ -201,7 +201,6 @@ public class GhostController : MonoBehaviour
                 stateManager.currentState == GhostStateManager.GhostState.Scared ||
                 stateManager.currentState == GhostStateManager.GhostState.Recovering)
             {
-                // Force ghost to reverse direction
                 Vector3Int reverseDir = -lastDirection;
                 Vector3Int reverseTile = currentGridPos + reverseDir;
 
@@ -303,7 +302,9 @@ public class GhostController : MonoBehaviour
         {
             Vector3Int exitMove = GetExitDirection();
             if (exitMove != currentGridPos)
+            {
                 return exitMove;
+            }
         }
 
         List<Vector3Int> validMoves = new List<Vector3Int>();
@@ -397,36 +398,48 @@ public class GhostController : MonoBehaviour
                 {
                     Vector3Int candidate = currentGridPos + preferX;
                     if (IsWalkable(candidate) && !candidate.Equals(previousGridPos))
+                    {
                         return candidate;
+                    }
                 }
 
                 if (preferY != Vector3Int.zero)
                 {
                     Vector3Int candidate = currentGridPos + preferY;
                     if (IsWalkable(candidate) && !candidate.Equals(previousGridPos))
+                    {
                         return candidate;
+                    }
                 }
 
                 if (preferX != Vector3Int.zero)
                 {
                     Vector3Int candidate = currentGridPos + new Vector3Int(0, (int)Mathf.Sign(delta.y), 0);
                     if (delta.y != 0 && IsWalkable(candidate) && !candidate.Equals(previousGridPos))
+                    {
                         return candidate;
+                    }
                 }
                 if (preferY != Vector3Int.zero)
                 {
                     Vector3Int candidate = currentGridPos + new Vector3Int((int)Mathf.Sign(delta.x), 0, 0);
                     if (delta.x != 0 && IsWalkable(candidate) && !candidate.Equals(previousGridPos))
+                    {
                         return candidate;
+                    }
                 }
 
                 List<Vector3Int> nonBack = new List<Vector3Int>();
                 foreach (var m in validMoves)
+                {
                     if (m != previousGridPos) nonBack.Add(m);
+                }
 
                 if (nonBack.Count > 0)
+                {
                     return nonBack[Random.Range(0, nonBack.Count)];
 
+                }
                 return validMoves[Random.Range(0, validMoves.Count)];
             }
         }
@@ -471,21 +484,30 @@ public class GhostController : MonoBehaviour
         gridPos.z = 0;
 
         if (stateManager.currentState == GhostStateManager.GhostState.Dead)
+        {
             return true;
+        }
 
         if (wallTilemap.HasTile(gridPos))
+        {
             return false;
+        }
 
         if (ghostWallTilemap.HasTile(gridPos))
         {
             if (isInsideGhostHouse || stateManager.currentState == GhostStateManager.GhostState.Dead)
+            {
                 return true;
-            else
+            } else
+            {
                 return false;
+            }
         }
 
         if (teleporterTileMap.HasTile(gridPos))
+        {
             return true;
+        }
 
         return true;
     }
@@ -557,7 +579,10 @@ public class GhostController : MonoBehaviour
 
     public void ResetToSpawn()
     {
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        if (moveCoroutine != null) 
+        { 
+            StopCoroutine(moveCoroutine); 
+        }
 
         isMoving = false;
         isFrozen = true;
@@ -584,7 +609,9 @@ public class GhostController : MonoBehaviour
         {
             ghost4PathIndex = 0;
             if (moveCoroutine != null)
+            {
                 StopCoroutine(moveCoroutine);
+            }
         }
 
         EnableMovement();
@@ -628,7 +655,9 @@ public class GhostController : MonoBehaviour
             ghost4PathIndex = 0;
 
             if (moveCoroutine != null)
+            {
                 StopCoroutine(moveCoroutine);
+            }
         }
 
         EnableMovement();
